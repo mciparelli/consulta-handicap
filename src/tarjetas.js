@@ -48,7 +48,7 @@ const Tarjetas = ({
             break;
           }
           case 'club': {
-            value = a.ClubName.localeCompare(b.ClubName);
+            value = a.NombreClub.localeCompare(b.NombreClub);
             break;
           }
           case 'score': {
@@ -76,7 +76,7 @@ const Tarjetas = ({
             break;
           }
           case 'dif': {
-            value = a.DisplayDiferencial - b.DisplayDiferencial;
+            value = a.Diferencial - b.Diferencial;
             break;
           }
         }
@@ -205,8 +205,10 @@ const Tarjetas = ({
                   }`}
                   key={index}
                 >
-                  <TableCell align="left">{tarjeta.DisplayDate}</TableCell>
-                  <TableCell align="left">{tarjeta.ClubName.trim()}</TableCell>
+                  <TableCell align="left">{tarjeta.FechaTorneo}</TableCell>
+                  <TableCell align="left">
+                    {tarjeta.NombreClub.trim()}
+                  </TableCell>
                   <TableCell align="center">{tarjeta.Score}</TableCell>
                   <Hidden smDown>
                     <TableCell align="center">{tarjeta.ESR}</TableCell>
@@ -217,9 +219,7 @@ const Tarjetas = ({
                       {tarjeta.ScoreAjustado}
                     </TableCell>
                   </Hidden>
-                  <TableCell align="center">
-                    {tarjeta.DisplayDiferencial}
-                  </TableCell>
+                  <TableCell align="center">{tarjeta.Diferencial}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
