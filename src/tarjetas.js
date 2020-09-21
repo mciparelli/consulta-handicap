@@ -40,19 +40,19 @@ const Tarjetas = ({
   };
   const sortedTarjetas = useMemo(
     () =>
-      tarjetas.slice(0).sort((a, b) => {
+      tarjetas.sort((a, b) => {
         let value;
         switch (orderBy) {
           case 'fecha': {
-            value = new Date(a.FechaTorneo) - new Date(b.FechaTorneo);
+            value = new Date(a.isoDate) - new Date(b.isoDate);
             break;
           }
           case 'club': {
-            value = a.NombreClub.localeCompare(b.NombreClub);
+            value = a.clubName.localeCompare(b.clubName);
             break;
           }
           case 'score': {
-            value = a.Score - b.Score;
+            value = a.score - b.score;
             break;
           }
           case 'esr': {
@@ -60,11 +60,11 @@ const Tarjetas = ({
             break;
           }
           case 'calificacion': {
-            value = a.CourseRating - b.CourseRating;
+            value = a.courseRating - b.courseRating;
             break;
           }
           case 'slope': {
-            value = a.SlopeRating - b.SlopeRating;
+            value = a.slopeRating - b.slopeRating;
             break;
           }
           case 'pcc': {
@@ -72,11 +72,11 @@ const Tarjetas = ({
             break;
           }
           case 'score-adj': {
-            value = a.ScoreAjustado - b.ScoreAjustado;
+            value = a.adjustedScore - b.adjustedScore;
             break;
           }
           case 'dif': {
-            value = a.Diferencial - b.Diferencial;
+            value = a.diferencial - b.diferencial;
             break;
           }
         }
@@ -98,7 +98,9 @@ const Tarjetas = ({
             {fullName} ({club}).{' '}
           </Hidden>
           Matrícula {matricula}.{' '}
-          <Box ml="auto">Hándicap Index: {handicapIndex}</Box>
+          <Box ml="auto" component="span">
+            Hándicap Index: {handicapIndex}
+          </Box>
         </Typography>
       </Box>
       <Box flexGrow={1} clone>
@@ -198,28 +200,26 @@ const Tarjetas = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedTarjetas.map((tarjeta, index) => (
+              {sortedTarjetas.map((tarjeta) => (
                 <TableRow
-                  className={`${tarjeta.Seleccionado ? 'selected' : ''} ${
+                  className={`${tarjeta.selected ? 'selected' : ''} ${
                     styles.tableRow
                   }`}
-                  key={index}
+                  key={tarjeta.id}
                 >
-                  <TableCell align="left">{tarjeta.FechaTorneo}</TableCell>
-                  <TableCell align="left">
-                    {tarjeta.NombreClub.trim()}
-                  </TableCell>
-                  <TableCell align="center">{tarjeta.Score}</TableCell>
+                  <TableCell align="left">{tarjeta.formattedDate}</TableCell>
+                  <TableCell align="left">{tarjeta.clubName.trim()}</TableCell>
+                  <TableCell align="center">{tarjeta.score}</TableCell>
                   <Hidden smDown>
                     <TableCell align="center">{tarjeta.ESR}</TableCell>
-                    <TableCell align="center">{tarjeta.CourseRating}</TableCell>
-                    <TableCell align="center">{tarjeta.SlopeRating}</TableCell>
+                    <TableCell align="center">{tarjeta.courseRating}</TableCell>
+                    <TableCell align="center">{tarjeta.slopeRating}</TableCell>
                     <TableCell align="center">{tarjeta.PCC}</TableCell>
                     <TableCell align="center">
-                      {tarjeta.ScoreAjustado}
+                      {tarjeta.adjustedScore}
                     </TableCell>
                   </Hidden>
-                  <TableCell align="center">{tarjeta.Diferencial}</TableCell>
+                  <TableCell align="center">{tarjeta.diferencial}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
