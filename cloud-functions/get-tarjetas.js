@@ -1,18 +1,35 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
+const getMatricula = async (profileUrl) => {
+  const res = await fetch(`https://ar.digitalgolftour.com/${profileUrl}`);
+
+  const html = await res.text();
+
+  const $ = cheerio.load(html);
+
+  return Number(
+    $('.player-info .row .right-col .row:nth-child(1) .col-md-4 .left-col')
+      .contents()[1]
+      .data.trim(),
+  );
+};
+
 const baseUrl = 'https://www.aag.org.ar/cake/Usuarios/getTarjetas';
 
 const getTarjetas = async (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    if (req.method === 'OPTIONS') {
-      res.set('Access-Control-Allow-Methods', 'GET');
-      res.set('Access-Control-Allow-Headers', 'Content-Type');
-      res.set('Access-Control-Max-Age', '3600');
-      res.status(204).send('');
-      return;
-    }
-  const matricula = req.query.matricula.trim();
+  res.set('Access-Control-Allow-Origin', '*');
+  if (req.method === 'OPTIONS') {
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Max-Age', '3600');
+    res.status(204).send('');
+    return;
+  }
+  let { profileUrl, matricula } = req.query;
+  if (!matricula) {
+    matricula = await getMatricula(profileUrl);
+  }
   const response = await fetch(`${baseUrl}/${matricula}`);
   const result = await response.json();
   // dont care about older ones
@@ -46,9 +63,9 @@ const getTarjetas = async (req, res) => {
     .slice(0, 8);
   const tarjetas = last20Tarjetas.map((tarjeta) => ({
     ...tarjeta,
-    selected: bestEight.some((candTarjeta) => candTarjeta.id === tarjeta.id)
+    selected: bestEight.some((candTarjeta) => candTarjeta.id === tarjeta.id),
   }));
-  res.send(tarjetas);
+  res.send({ tarjetas, matricula });
 };
 
 module.exports = getTarjetas;

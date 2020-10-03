@@ -25,12 +25,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Tarjetas = ({
-  jugador: { fullName, club, matricula, handicapIndex },
+  jugador: { fullName, club, profileUrl, matricula, handicapIndex },
 }) => {
   const styles = useStyles();
-  const { data: tarjetas } = useSwr(getTarjetas(matricula), {
+  const { data } = useSwr(getTarjetas({ matricula, profileUrl }), {
     suspense: true,
   });
+  const { tarjetas } = data;
+  matricula = data.matricula;
   const [orderBy, setOrderBy] = useState('fecha');
   const [ascSort, setAscSort] = useState(false);
   const sortDirection = ascSort ? 'asc' : 'desc';

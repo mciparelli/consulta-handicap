@@ -70,27 +70,23 @@ function App() {
                       }
                       getOptionLabel={({ fullName }) => fullName}
                       filterOptions={(options) => options}
-                      renderOption={({
-                        fullName,
-                        matricula,
-                        club,
-                        handicapIndex,
-                      }) => {
+                      renderOption={({ fullName, club, handicapIndex }) => {
                         return (
                           <Tooltip
                             title={
                               <Typography component="div">
-                                <div>Mat. {matricula}</div>
                                 <div>Hándicap: {handicapIndex}</div>
                                 <div>Club: {club}</div>
                               </Typography>
                             }
                           >
-                            <Typography noWrap>{fullName}</Typography>
+                            <Typography noWrap>
+                              {fullName} ({handicapIndex})
+                            </Typography>
                           </Tooltip>
                         );
                       }}
-                      options={options ?? []}
+                      options={options || []}
                       loading={loading}
                       value={selected}
                       clearOnBlur={false}
@@ -127,28 +123,28 @@ function App() {
           </Toolbar>
         </Box>
       </AppBar>
-      <Suspense
-        fallback={
-          <Box m="auto" p={2} textAlign="center">
-            <Typography variant="h4">
-              Cargando tarjetas de {selected?.fullName}
-            </Typography>
-            <Box py={2}>
-              <LinearProgress />
+      {selected ? (
+        <Suspense
+          fallback={
+            <Box m="auto" p={2} textAlign="center">
+              <Typography variant="h4">
+                Cargando tarjetas de {selected.fullName}
+              </Typography>
+              <Box py={2}>
+                <LinearProgress />
+              </Box>
             </Box>
-          </Box>
-        }
-      >
-        {selected ? (
+          }
+        >
           <Tarjetas jugador={selected} />
-        ) : (
-          <Box m="auto" p={2} textAlign="center">
-            <Typography variant="h4">
-              Elija un jugador para consultar sus últimas 20 tarjetas.
-            </Typography>
-          </Box>
-        )}
-      </Suspense>
+        </Suspense>
+      ) : (
+        <Box m="auto" p={2} textAlign="center">
+          <Typography variant="h4">
+            Elija un jugador para consultar sus últimas 20 tarjetas.
+          </Typography>
+        </Box>
+      )}
     </>
   );
 }
