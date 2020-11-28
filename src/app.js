@@ -23,10 +23,21 @@ function App() {
   const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(null);
+  console.log(selected);
   const [textValue, setTextValue] = useState('');
   const [debouncedText] = useDebounce(textValue, 250);
   const { data: options } = useSwr(debouncedText && getPlayers(debouncedText));
   const loading = Boolean(debouncedText && !options);
+  useEffect(() => {
+    let qs = new URLSearchParams(document.location.search);
+    const defaultMatricula = qs.get('matricula');
+    if (!defaultMatricula || !/^\d+/.test(defaultMatricula)) return;
+    fetch(getPlayers(defaultMatricula))
+      .then((res) => res.json())
+      .then(([player]) => {
+        if (player) setSelected(player);
+      });
+  }, []);
 
   return (
     <>
