@@ -9,10 +9,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   Hidden,
   Paper,
 } from '@material-ui/core';
+import { Info as InfoIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { getTarjetas } from './api';
 
@@ -191,13 +193,20 @@ const Tarjetas = ({
                   </TableCell>
                 </Hidden>
                 <TableCell align="center">
-                  <TableSortLabel
-                    active={orderBy === 'dif'}
-                    direction={orderBy === 'dif' ? sortDirection : undefined}
-                    onClick={(_ev) => sortBy('dif')}
-                  >
-                    Diferencial Ajustado
-                  </TableSortLabel>
+                  <Tooltip title="(113 / Slope) x (Score Ajustado – Calificación - PCC)">
+                    <TableSortLabel
+                      active={orderBy === 'dif'}
+                      direction={orderBy === 'dif' ? sortDirection : undefined}
+                      onClick={(_ev) => sortBy('dif')}
+                    >
+                      Diferencial Ajustado
+                      <Box ml={1}>
+                        <Typography color="textSecondary">
+                          <InfoIcon />
+                        </Typography>
+                      </Box>
+                    </TableSortLabel>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             </TableHead>
