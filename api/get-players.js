@@ -49,22 +49,26 @@ const findPlayersFromDigitalGolf = async (searchString) => {
 };
 
 const getPlayers = async (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*');
-  if (req.method === 'OPTIONS') {
-    res.set('Access-Control-Allow-Methods', 'GET');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
-    res.set('Access-Control-Max-Age', '3600');
-    res.status(204).send('');
-    return;
-  }
-  const { searchString } = req.query;
+  // res.set('Access-Control-Allow-Origin', '*');
+  // if (req.method === 'OPTIONS') {
+  //   res.set('Access-Control-Allow-Methods', 'GET');
+  //   res.set('Access-Control-Allow-Headers', 'Content-Type');
+  //   res.set('Access-Control-Max-Age', '3600');
+  //   res.status(204).send('');
+  //   return;
+  // }
+  // const { searchString } = req.query;
+  const searchString = '79581';
   const trimmedString = searchString.trim();
   let players = await findPlayersFromVista(trimmedString);
   // sometimes players are just not found in vista
   if (players.length === 0) {
     players = await findPlayersFromDigitalGolf(trimmedString);
   }
-  res.send(players);
+  console.log(players);
+  // res.send(players);
 };
 
 module.exports = getPlayers;
+
+getPlayers();
