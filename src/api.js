@@ -1,9 +1,9 @@
 const baseUrl = 'https://consulta-handicap.vercel.app/api/';
 
 const getPlayers = (searchString) =>
-	`${baseUrl}getPlayers?searchString=${searchString}`;
+	`${baseUrl}get-players?searchString=${searchString}`;
 
 const getTarjetas = ({ profileUrl = '', matricula = '' }) =>
-	`${baseUrl}getTarjetas?profileUrl=${profileUrl}&matricula=${matricula}`;
+	`${baseUrl}get-tarjetas?profileUrl=${profileUrl}&matricula=${matricula}`;
 
 export { getPlayers, getTarjetas };
