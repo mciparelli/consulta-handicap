@@ -18,14 +18,6 @@ const getMatricula = async (profileUrl) => {
 const baseUrl = 'https://www.aag.org.ar/cake/Usuarios/getTarjetas';
 
 const getTarjetas = async (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*');
-  if (req.method === 'OPTIONS') {
-    res.set('Access-Control-Allow-Methods', 'GET');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
-    res.set('Access-Control-Max-Age', '3600');
-    res.status(204).send('');
-    return;
-  }
   let { profileUrl, matricula } = req.query;
   if (!matricula) {
     matricula = await getMatricula(profileUrl);
@@ -65,7 +57,7 @@ const getTarjetas = async (req, res) => {
     ...tarjeta,
     selected: bestEight.some((candTarjeta) => candTarjeta.id === tarjeta.id),
   }));
-  res.send({ tarjetas, matricula });
+  res.json({ tarjetas, matricula });
 };
 
 module.exports = getTarjetas;
