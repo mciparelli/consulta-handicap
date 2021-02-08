@@ -15,20 +15,39 @@ import {
   Paper,
 } from '@material-ui/core';
 import { Info as InfoIcon } from '@material-ui/icons';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { getTarjetas } from './api';
 
-const useStyles = makeStyles((theme) => ({
-  tableRow: {
-    '&.selected': {
-      backgroundColor: theme.palette.success.light,
+function hexToRGB(hex, alpha) {
+  var r = parseInt(hex.slice(1, 3), 16),
+    g = parseInt(hex.slice(3, 5), 16),
+    b = parseInt(hex.slice(5, 7), 16);
+
+  if (alpha) {
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+  } else {
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+  }
+}
+
+const useStyles = makeStyles(
+  (theme) =>
+    console.log(theme) || {
+      tableRow: {
+        '&.unprocessed': {
+          backgroundColor: hexToRGB(theme.palette.warning.light, 0.2),
+        },
+        '&.selected': {
+          backgroundColor: theme.palette.success.light,
+        },
+      },
     },
-  },
-}));
+);
 
 const Tarjetas = ({
   jugador: { fullName, club, profileUrl, matricula, handicapIndex },
 }) => {
+  const theme = useTheme();
   const styles = useStyles();
   const { data } = useSwr(getTarjetas({ matricula, profileUrl }), {
     suspense: true,
@@ -106,6 +125,16 @@ const Tarjetas = ({
             Hándicap Index: {handicapIndex}
           </Box>
         </Typography>
+      </Box>
+      <Box display="flex" py={2}>
+        <Box
+          mr={1}
+          borderRadius={2}
+          width={40}
+          height={20}
+          bgcolor={hexToRGB(theme.palette.warning.light, 0.2)}
+        ></Box>
+        <Typography>Ingresan el próximo jueves</Typography>
       </Box>
       <Box flexGrow={1} clone>
         <TableContainer component={Paper}>
@@ -213,9 +242,9 @@ const Tarjetas = ({
             <TableBody>
               {sortedTarjetas.map((tarjeta) => (
                 <TableRow
-                  className={`${tarjeta.selected ? 'selected' : ''} ${
-                    styles.tableRow
-                  }`}
+                  className={`${tarjeta.processed ? '' : 'unprocessed'} ${
+                    tarjeta.selected ? 'selected' : ''
+                  } ${styles.tableRow}`}
                   key={tarjeta.id}
                 >
                   <TableCell align="left">{tarjeta.formattedDate}</TableCell>

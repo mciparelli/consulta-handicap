@@ -24,8 +24,8 @@ const getTarjetas = async (req, res) => {
   }
   const response = await fetch(`${baseUrl}/${matricula}`);
   const result = await response.json();
-  // dont care about older ones
-  const last20Tarjetas = result.slice(0, 20).map((tarjeta) => {
+
+  const allTarjetas = result.map((tarjeta) => {
     const [clubId, clubName] = tarjeta.NombreClub.split(' - ');
     const diferencial = tarjeta.Diferencial;
     const date = new Date(tarjeta.FechaTorneo);
@@ -46,18 +46,31 @@ const getTarjetas = async (req, res) => {
       PCC: tarjeta.PCC,
       courseRating: tarjeta.CourseRating,
       slopeRating: tarjeta.SlopeRating,
+      processed: tarjeta.Procesado,
     };
   });
+
+  const [processed, unprocessed] = [[], []];
+
+  for (let tarjeta of allTarjetas) {
+    if (tarjeta.processed) {
+      processed.push(tarjeta);
+    } else {
+      unprocessed.push(tarjeta);
+    }
+  }
+  // dont care about older ones
+  let last20Tarjetas = processed.slice(0, 20);
   const bestEight = last20Tarjetas
     .sort((a, b) => {
       return a.diferencial - b.diferencial;
     })
     .slice(0, 8);
-  const tarjetas = last20Tarjetas.map((tarjeta) => ({
+  last20Tarjetas = last20Tarjetas.map((tarjeta) => ({
     ...tarjeta,
     selected: bestEight.some((candTarjeta) => candTarjeta.id === tarjeta.id),
   }));
-  res.json({ tarjetas, matricula });
+  res.json({ tarjetas: [...unprocessed, ...last20Tarjetas], matricula });
 };
 
 const allowCors = (fn) => async (req, res) => {
