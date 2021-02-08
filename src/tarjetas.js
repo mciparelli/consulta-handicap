@@ -30,19 +30,16 @@ function hexToRGB(hex, alpha) {
   }
 }
 
-const useStyles = makeStyles(
-  (theme) =>
-    console.log(theme) || {
-      tableRow: {
-        '&.unprocessed': {
-          backgroundColor: hexToRGB(theme.palette.warning.light, 0.2),
-        },
-        '&.selected': {
-          backgroundColor: theme.palette.success.light,
-        },
-      },
+const useStyles = makeStyles((theme) => ({
+  tableRow: {
+    '&.unprocessed': {
+      backgroundColor: hexToRGB(theme.palette.warning.light, 0.2),
     },
-);
+    '&.selected': {
+      backgroundColor: theme.palette.success.light,
+    },
+  },
+}));
 
 const Tarjetas = ({
   jugador: { fullName, club, profileUrl, matricula, handicapIndex },
@@ -53,6 +50,14 @@ const Tarjetas = ({
     suspense: true,
   });
   const { tarjetas } = data;
+  const nextBestEight = tarjetas
+    .slice(0, 20)
+    .sort((a, b) => a.diferencial - b.diferencial)
+    .slice(0, 8);
+  const nextHandicapIndex = nextBestEight
+    .reduce((acc, card) => card.diferencial / 8 + acc, 0)
+    .toFixed(1);
+
   matricula = data.matricula;
   const [orderBy, setOrderBy] = useState('fecha');
   const [ascSort, setAscSort] = useState(false);
@@ -121,13 +126,28 @@ const Tarjetas = ({
             {fullName} ({club}).{' '}
           </Hidden>
           Matrícula {matricula}.{' '}
-          <Box ml="auto" component="span">
-            Hándicap Index: {handicapIndex}
+          <Box ml="auto" textAlign="right">
+            <Box>Hándicap Index: {handicapIndex}</Box>
+            <Box>
+              Próximo Hándicap Index:{' '}
+              <Tooltip title="Puede cambiar si ingresan nuevas tarjetas antes del jueves próximo">
+                <span>{nextHandicapIndex}</span>
+              </Tooltip>
+            </Box>
           </Box>
         </Typography>
       </Box>
       <Box display="flex" py={2}>
         <Box
+          mr={1}
+          borderRadius={2}
+          width={40}
+          height={20}
+          bgcolor={theme.palette.success.light}
+        ></Box>
+        <Typography>Computan para el hándicap actual</Typography>
+        <Box
+          ml={2}
           mr={1}
           borderRadius={2}
           width={40}
