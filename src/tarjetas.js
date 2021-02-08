@@ -129,7 +129,7 @@ const Tarjetas = ({
           <Box ml="auto" textAlign="right">
             <Box>Hándicap Index: {handicapIndex}</Box>
             <Box>
-              Próximo Hándicap Index:{' '}
+              Hándicap Index proyectado:{' '}
               <Tooltip title="Puede cambiar si ingresan nuevas tarjetas antes del jueves próximo">
                 <span>{nextHandicapIndex}</span>
               </Tooltip>
