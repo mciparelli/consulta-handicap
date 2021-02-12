@@ -54,9 +54,11 @@ const Tarjetas = ({
     .slice(0, 20)
     .sort((a, b) => a.diferencial - b.diferencial)
     .slice(0, 8);
-  const nextHandicapIndex = nextBestEight
-    .reduce((acc, card) => card.diferencial / 8 + acc, 0)
-    .toFixed(1);
+  const nextHandicapIndex = tarjetas.some((tarjeta) => !tarjeta.processed)
+    ? nextBestEight
+        .reduce((acc, card) => card.diferencial / 8 + acc, 0)
+        .toFixed(1)
+    : handicapIndex;
 
   matricula = data.matricula;
   const [orderBy, setOrderBy] = useState('fecha');
