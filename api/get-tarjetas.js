@@ -25,41 +25,28 @@ const getTarjetas = async (req, res) => {
   const response = await fetch(`${baseUrl}/${matricula}`);
   const result = await response.json();
 
-  let lastTh = new Date();
-  while (lastTh.getDay() !== 4) {
-    lastTh.setDate(lastTh.getDate() - 1);
-  }
-  lastTh.setHours(0, 0, 0, 0);
-
   const allTarjetas = result.map((tarjeta) => {
-    const {
-      Club: { Clu_Nom: clubName },
-      0: { Fecha_Torneo: formattedDate },
-      Tarjeta: {
-        PCC,
-        Course_Rating: courseRating,
-        Slope_Rating: slopeRating,
-        Seleccionado: _seleccionado,
-        Diferencial_Ajustado: diferencial,
-        Score: score,
-        Score_Ajustado: adjustedScore,
-      },
-    } = tarjeta;
-
-    const date = new Date(formattedDate.split('/').reverse().join('-'));
-
+    const [clubId, clubName] = tarjeta.NombreClub.split(' - ');
+    const diferencial = tarjeta.Diferencial;
+    const date = new Date(tarjeta.FechaTorneo);
+    const formattedDate = `${date.getDate()}/${
+      date.getMonth() + 1
+    }/${date.getFullYear()}`;
+    const idTarjeta = `${clubId}-${formattedDate}-${diferencial}`;
     return {
-      id: `${clubName}-${formattedDate}-${diferencial}`,
+      id: idTarjeta,
       isoDate: date.toISOString(),
       formattedDate,
+      clubId,
       clubName,
-      processed: date < lastTh,
       diferencial,
-      score,
-      adjustedScore,
-      PCC,
-      courseRating,
-      slopeRating,
+      score: tarjeta.Score,
+      adjustedScore: tarjeta.ScoreAjustado,
+      ESR: tarjeta.ESR,
+      PCC: tarjeta.PCC,
+      courseRating: tarjeta.CourseRating,
+      slopeRating: tarjeta.SlopeRating,
+      processed: tarjeta.Procesado,
     };
   });
 
