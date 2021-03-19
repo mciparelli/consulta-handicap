@@ -85,10 +85,6 @@ const Tarjetas = ({
             value = a.score - b.score;
             break;
           }
-          case 'esr': {
-            value = a.ESR - b.ESR;
-            break;
-          }
           case 'calificacion': {
             value = a.courseRating - b.courseRating;
             break;
@@ -193,15 +189,6 @@ const Tarjetas = ({
                 <Hidden smDown>
                   <TableCell align="center">
                     <TableSortLabel
-                      active={orderBy === 'esr'}
-                      direction={orderBy === 'esr' ? sortDirection : undefined}
-                      onClick={(_ev) => sortBy('esr')}
-                    >
-                      ESR
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell align="center">
-                    <TableSortLabel
                       active={orderBy === 'calificacion'}
                       direction={
                         orderBy === 'calificacion' ? sortDirection : undefined
@@ -273,7 +260,6 @@ const Tarjetas = ({
                   <TableCell align="left">{tarjeta.clubName.trim()}</TableCell>
                   <TableCell align="center">{tarjeta.score}</TableCell>
                   <Hidden smDown>
-                    <TableCell align="center">{tarjeta.ESR}</TableCell>
                     <TableCell align="center">{tarjeta.courseRating}</TableCell>
                     <TableCell align="center">{tarjeta.slopeRating}</TableCell>
                     <TableCell align="center">{tarjeta.PCC}</TableCell>

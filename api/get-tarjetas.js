@@ -42,7 +42,6 @@ const getTarjetas = async (req, res) => {
       diferencial,
       score: tarjeta.Score,
       adjustedScore: tarjeta.ScoreAjustado,
-      ESR: tarjeta.ESR,
       PCC: tarjeta.PCC,
       courseRating: tarjeta.CourseRating,
       slopeRating: tarjeta.SlopeRating,
