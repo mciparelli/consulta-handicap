@@ -30,7 +30,7 @@ function hexToRGB(hex, alpha) {
   }
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   tableRow: {
     '&.unprocessed': {
       backgroundColor: hexToRGB(theme.palette.warning.light, 0.2),
@@ -49,22 +49,13 @@ const Tarjetas = ({
   const { data } = useSwr(getTarjetas({ matricula, profileUrl }), {
     suspense: true,
   });
-  const { tarjetas } = data;
-  const nextBestEight = tarjetas
-    .slice(0, 20)
-    .sort((a, b) => a.diferencial - b.diferencial)
-    .slice(0, 8);
-  const nextHandicapIndex = tarjetas.some((tarjeta) => !tarjeta.processed)
-    ? nextBestEight
-        .reduce((acc, card) => card.diferencial / 8 + acc, 0)
-        .toFixed(1)
-    : handicapIndex;
+  const { tarjetas, nextHandicapIndex } = data;
 
   matricula = data.matricula;
   const [orderBy, setOrderBy] = useState('fecha');
   const [ascSort, setAscSort] = useState(false);
   const sortDirection = ascSort ? 'asc' : 'desc';
-  const sortBy = (newOrderBy) => {
+  const sortBy = newOrderBy => {
     setOrderBy(newOrderBy);
     setAscSort(newOrderBy === orderBy ? !ascSort : true);
   };
@@ -126,12 +117,14 @@ const Tarjetas = ({
           Matrícula {matricula}.{' '}
           <Box ml="auto" textAlign="right">
             <Box>Hándicap Index: {handicapIndex}</Box>
-            <Box>
-              Hándicap Index proyectado:{' '}
-              <Tooltip title="Puede cambiar si ingresan nuevas tarjetas antes del jueves próximo">
-                <span>{nextHandicapIndex}</span>
-              </Tooltip>
-            </Box>
+            {nextHandicapIndex && (
+              <Box>
+                Hándicap Index proyectado:{' '}
+                <Tooltip title="Puede cambiar si ingresan nuevas tarjetas antes del jueves próximo">
+                  <span>{nextHandicapIndex}</span>
+                </Tooltip>
+              </Box>
+            )}
           </Box>
         </Typography>
       </Box>
@@ -163,7 +156,7 @@ const Tarjetas = ({
                   <TableSortLabel
                     active={orderBy === 'fecha'}
                     direction={orderBy === 'fecha' ? sortDirection : undefined}
-                    onClick={(_ev) => sortBy('fecha')}
+                    onClick={_ev => sortBy('fecha')}
                   >
                     Fecha
                   </TableSortLabel>
@@ -172,7 +165,7 @@ const Tarjetas = ({
                   <TableSortLabel
                     active={orderBy === 'club'}
                     direction={orderBy === 'club' ? sortDirection : undefined}
-                    onClick={(_ev) => sortBy('club')}
+                    onClick={_ev => sortBy('club')}
                   >
                     Club
                   </TableSortLabel>
@@ -181,7 +174,7 @@ const Tarjetas = ({
                   <TableSortLabel
                     active={orderBy === 'score'}
                     direction={orderBy === 'score' ? sortDirection : undefined}
-                    onClick={(_ev) => sortBy('score')}
+                    onClick={_ev => sortBy('score')}
                   >
                     Score
                   </TableSortLabel>
@@ -193,7 +186,7 @@ const Tarjetas = ({
                       direction={
                         orderBy === 'calificacion' ? sortDirection : undefined
                       }
-                      onClick={(_ev) => sortBy('calificacion')}
+                      onClick={_ev => sortBy('calificacion')}
                     >
                       Calificación
                     </TableSortLabel>
@@ -204,7 +197,7 @@ const Tarjetas = ({
                       direction={
                         orderBy === 'slope' ? sortDirection : undefined
                       }
-                      onClick={(_ev) => sortBy('slope')}
+                      onClick={_ev => sortBy('slope')}
                     >
                       Slope
                     </TableSortLabel>
@@ -213,7 +206,7 @@ const Tarjetas = ({
                     <TableSortLabel
                       active={orderBy === 'pcc'}
                       direction={orderBy === 'pcc' ? sortDirection : undefined}
-                      onClick={(_ev) => sortBy('pcc')}
+                      onClick={_ev => sortBy('pcc')}
                     >
                       PCC
                     </TableSortLabel>
@@ -224,7 +217,7 @@ const Tarjetas = ({
                       direction={
                         orderBy === 'score-adj' ? sortDirection : undefined
                       }
-                      onClick={(_ev) => sortBy('score-adj')}
+                      onClick={_ev => sortBy('score-adj')}
                     >
                       Score Ajustado
                     </TableSortLabel>
@@ -235,7 +228,7 @@ const Tarjetas = ({
                     <TableSortLabel
                       active={orderBy === 'dif'}
                       direction={orderBy === 'dif' ? sortDirection : undefined}
-                      onClick={(_ev) => sortBy('dif')}
+                      onClick={_ev => sortBy('dif')}
                     >
                       Diferencial Ajustado
                       <Box ml={1}>
@@ -249,7 +242,7 @@ const Tarjetas = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedTarjetas.map((tarjeta) => (
+              {sortedTarjetas.map(tarjeta => (
                 <TableRow
                   className={`${tarjeta.processed ? '' : 'unprocessed'} ${
                     tarjeta.selected ? 'selected' : ''

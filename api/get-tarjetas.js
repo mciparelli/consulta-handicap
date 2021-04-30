@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
-const getMatricula = async (profileUrl) => {
+const getMatricula = async profileUrl => {
   const res = await fetch(`https://ar.digitalgolftour.com/${profileUrl}`);
 
   const html = await res.text();
@@ -25,13 +25,18 @@ const getTarjetas = async (req, res) => {
   const response = await fetch(`${baseUrl}/${matricula}`);
   const result = await response.json();
 
-  const allTarjetas = result.map((tarjeta) => {
+  const allTarjetas = result.map(tarjeta => {
     const [clubId, clubName] = tarjeta.NombreClub.split(' - ');
-    const diferencial = tarjeta.Diferencial;
+    const slopeRating = tarjeta.SlopeRating;
+    const adjustedScore = tarjeta.ScoreAjustado;
+    const courseRating = tarjeta.CourseRating;
+    const PCC = tarjeta.PCC;
+    const diferencial =
+      (113 / slopeRating) * (adjustedScore - courseRating - PCC);
+    const diferencialPretty = tarjeta.Diferencial;
     const date = new Date(tarjeta.FechaTorneo);
-    const formattedDate = `${date.getDate()}/${
-      date.getMonth() + 1
-    }/${date.getFullYear()}`;
+    const formattedDate = `${date.getDate()}/${date.getMonth() +
+      1}/${date.getFullYear()}`;
     const idTarjeta = `${clubId}-${formattedDate}-${diferencial}`;
     return {
       id: idTarjeta,
@@ -40,11 +45,12 @@ const getTarjetas = async (req, res) => {
       clubId,
       clubName,
       diferencial,
+      diferencialPretty,
       score: tarjeta.Score,
-      adjustedScore: tarjeta.ScoreAjustado,
-      PCC: tarjeta.PCC,
-      courseRating: tarjeta.CourseRating,
-      slopeRating: tarjeta.SlopeRating,
+      PCC,
+      adjustedScore,
+      courseRating,
+      slopeRating,
       processed: tarjeta.Procesado,
     };
   });
@@ -65,14 +71,25 @@ const getTarjetas = async (req, res) => {
       return a.diferencial - b.diferencial;
     })
     .slice(0, 8);
-  last20Tarjetas = last20Tarjetas.map((tarjeta) => ({
+  last20Tarjetas = last20Tarjetas.map(tarjeta => ({
     ...tarjeta,
-    selected: bestEight.some((candTarjeta) => candTarjeta.id === tarjeta.id),
+    selected: bestEight.some(candTarjeta => candTarjeta.id === tarjeta.id),
   }));
-  res.json({ tarjetas: [...unprocessed, ...last20Tarjetas], matricula });
+  const tarjetas = [...unprocessed, ...last20Tarjetas];
+  const nextHandicapIndex =
+    unprocessed.length > 0
+      ? (
+          tarjetas
+            .slice(0, 20)
+            .sort((a, b) => a.diferencial - b.diferencial)
+            .slice(0, 8)
+            .reduce((acc, tarjeta) => tarjeta.diferencial + acc, 0) / 8
+        ).toFixed(1)
+      : null;
+  res.json({ tarjetas, nextHandicapIndex, matricula });
 };
 
-const allowCors = (fn) => async (req, res) => {
+const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   // another common pattern
