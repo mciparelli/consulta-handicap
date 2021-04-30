@@ -260,7 +260,9 @@ const Tarjetas = ({
                       {tarjeta.adjustedScore}
                     </TableCell>
                   </Hidden>
-                  <TableCell align="center">{tarjeta.diferencial}</TableCell>
+                  <TableCell align="center">
+                    {tarjeta.diferencialPretty}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
