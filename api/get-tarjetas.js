@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
-const getMatricula = async profileUrl => {
+const getMatricula = async (profileUrl) => {
   const res = await fetch(`https://ar.digitalgolftour.com/${profileUrl}`);
 
   const html = await res.text();
@@ -17,6 +17,59 @@ const getMatricula = async profileUrl => {
 
 const baseUrl = 'https://www.aag.org.ar/cake/Usuarios/getTarjetas';
 
+const isTarjetaSelected = ({ id, tarjetas }) => {
+  const all9Holes = tarjetas
+    .filter((tarjeta) => tarjeta.is9Holes)
+    .sort((a, b) => a.diferencial - b.diferencial);
+  let selected9Holes = [];
+  for (let i = 0; i < all9Holes.length; i += 2) {
+    if (all9Holes[i + 1]) {
+      selected9Holes = [...selected9Holes, all9Holes[i], all9Holes[i + 1]];
+    }
+  }
+
+  let tarjetas18Holes = tarjetas.filter((tarjeta) => !tarjeta.is9Holes);
+  const tarjetasToConsider = [...selected9Holes, ...tarjetas18Holes];
+  return tarjetasToConsider
+    .sort((a, b) => a.diferencial - b.diferencial)
+    .slice(0, 8)
+    .map((tarjeta) => tarjeta.id)
+    .includes(id);
+};
+
+const calcHandicapIndex = (tarjetas) => {
+  const allDiferenciales9Holes = tarjetas
+    .filter((tarjeta) => tarjeta.is9Holes)
+    .map((tarjeta) => tarjeta.diferencial)
+    .sort((a, b) => a - b);
+  let diferenciales9Holes = [];
+  for (let i = 0; i < allDiferenciales9Holes.length; i += 2) {
+    if (allDiferenciales9Holes[i + 1]) {
+      diferenciales9Holes = [
+        ...diferenciales9Holes,
+        allDiferenciales9Holes[i] + allDiferenciales9Holes[i + 1],
+      ];
+    }
+  }
+
+  let tarjetas18Holes = tarjetas.filter((tarjeta) => !tarjeta.is9Holes);
+
+  const diferenciales18Holes = tarjetas18Holes.map(
+    (tarjeta) => tarjeta.diferencial,
+  );
+
+  const diferencialesToConsider = [
+    ...diferenciales9Holes,
+    ...diferenciales18Holes,
+  ];
+  return (
+    diferencialesToConsider
+      .sort((a, b) => a - b)
+      .slice(0, 8)
+      .reduce((acc, diferencial) => diferencial + acc, 0) / 8
+  ).toFixed(1);
+};
+
 const getTarjetas = async (req, res) => {
   let { profileUrl, matricula } = req.query;
   if (!matricula) {
@@ -25,7 +78,7 @@ const getTarjetas = async (req, res) => {
   const response = await fetch(`${baseUrl}/${matricula}`);
   const result = await response.json();
 
-  const allTarjetas = result.map(tarjeta => {
+  const allTarjetas = result.map((tarjeta) => {
     const [clubId, clubName] = tarjeta.NombreClub.split(' - ');
     const slopeRating = tarjeta.SlopeRating;
     const adjustedScore = tarjeta.ScoreAjustado;
@@ -35,8 +88,9 @@ const getTarjetas = async (req, res) => {
       (113 / slopeRating) * (adjustedScore - courseRating - PCC);
     const diferencialPretty = tarjeta.Diferencial;
     const date = new Date(tarjeta.FechaTorneo);
-    const formattedDate = `${date.getDate()}/${date.getMonth() +
-      1}/${date.getFullYear()}`;
+    const formattedDate = `${date.getDate()}/${
+      date.getMonth() + 1
+    }/${date.getFullYear()}`;
     const idTarjeta = `${clubId}-${formattedDate}-${diferencial}`;
     return {
       id: idTarjeta,
@@ -51,6 +105,7 @@ const getTarjetas = async (req, res) => {
       adjustedScore,
       courseRating,
       slopeRating,
+      is9Holes: tarjeta.TipoTarjeta === '9',
       processed: tarjeta.Procesado,
     };
   });
@@ -66,30 +121,17 @@ const getTarjetas = async (req, res) => {
   }
   // dont care about older ones
   let last20Tarjetas = processed.slice(0, 20);
-  const bestEight = last20Tarjetas
-    .sort((a, b) => {
-      return a.diferencial - b.diferencial;
-    })
-    .slice(0, 8);
-  last20Tarjetas = last20Tarjetas.map(tarjeta => ({
+  last20Tarjetas = last20Tarjetas.map((tarjeta) => ({
     ...tarjeta,
-    selected: bestEight.some(candTarjeta => candTarjeta.id === tarjeta.id),
+    selected: isTarjetaSelected({ id: tarjeta.id, tarjetas: last20Tarjetas }),
   }));
   const tarjetas = [...unprocessed, ...last20Tarjetas];
   const nextHandicapIndex =
-    unprocessed.length > 0
-      ? (
-          tarjetas
-            .slice(0, 20)
-            .sort((a, b) => a.diferencial - b.diferencial)
-            .slice(0, 8)
-            .reduce((acc, tarjeta) => tarjeta.diferencial + acc, 0) / 8
-        ).toFixed(1)
-      : null;
+    unprocessed.length > 0 ? calcHandicapIndex(tarjetas.slice(0, 20)) : null;
   res.json({ tarjetas, nextHandicapIndex, matricula });
 };
 
-const allowCors = fn => async (req, res) => {
+const allowCors = (fn) => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   // another common pattern
