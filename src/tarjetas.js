@@ -117,14 +117,14 @@ const Tarjetas = ({
           Matrícula {matricula}.{' '}
           <Box ml="auto" textAlign="right">
             <Box>Hándicap Index: {handicapIndex}</Box>
-            {nextHandicapIndex && (
+            {/*nextHandicapIndex && (
               <Box>
                 Hándicap Index proyectado:{' '}
                 <Tooltip title="Puede cambiar si ingresan nuevas tarjetas antes del jueves próximo">
                   <span>{nextHandicapIndex}</span>
                 </Tooltip>
               </Box>
-            )}
+            )*/}
           </Box>
         </Typography>
       </Box>
@@ -260,7 +260,9 @@ const Tarjetas = ({
                       {tarjeta.adjustedScore}
                     </TableCell>
                   </Hidden>
-                  <TableCell align="center">{tarjeta.diferencial}</TableCell>
+                  <TableCell align="center">
+                    {tarjeta.diferencial.toFixed(1)}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
