@@ -17,24 +17,30 @@ const getMatricula = async (profileUrl) => {
 
 const baseUrl = 'https://www.aag.org.ar/cake/Usuarios/getTarjetas';
 
-const isTarjetaSelected = ({ id, tarjetas }) => {
+const getSelectedIds = (tarjetas) => {
   const all9Holes = tarjetas
     .filter((tarjeta) => tarjeta.is9Holes)
     .sort((a, b) => a.diferencial - b.diferencial);
   let selected9Holes = [];
   for (let i = 0; i < all9Holes.length; i += 2) {
     if (all9Holes[i + 1]) {
-      selected9Holes = [...selected9Holes, all9Holes[i], all9Holes[i + 1]];
+      selected9Holes = [
+        ...selected9Holes,
+        {
+          ids: [all9Holes[i], all9Holes[i + 1]],
+          is9: true,
+          diferencial: all9Holes[i].diferencial + all9Holes[i + 1].diferencial,
+        },
+      ];
     }
   }
-
   let tarjetas18Holes = tarjetas.filter((tarjeta) => !tarjeta.is9Holes);
   const tarjetasToConsider = [...selected9Holes, ...tarjetas18Holes];
   return tarjetasToConsider
     .sort((a, b) => a.diferencial - b.diferencial)
-    .slice(0, 8)
-    .map((tarjeta) => tarjeta.id)
-    .includes(id);
+    .map((t) => (t.is9 ? t.ids : t.id))
+    .flat()
+    .slice(0, 8);
 };
 
 const calcHandicapIndex = (tarjetas) => {
@@ -84,9 +90,7 @@ const getTarjetas = async (req, res) => {
     const adjustedScore = tarjeta.ScoreAjustado;
     const courseRating = tarjeta.CourseRating;
     const PCC = tarjeta.PCC;
-    const diferencial =
-      (113 / slopeRating) * (adjustedScore - courseRating - PCC);
-    const diferencialPretty = tarjeta.Diferencial;
+    const diferencial = tarjeta.Diferencial;
     const date = new Date(tarjeta.FechaTorneo);
     const formattedDate = `${date.getDate()}/${
       date.getMonth() + 1
@@ -99,7 +103,6 @@ const getTarjetas = async (req, res) => {
       clubId,
       clubName,
       diferencial,
-      diferencialPretty,
       score: tarjeta.Score,
       PCC,
       adjustedScore,
@@ -121,9 +124,10 @@ const getTarjetas = async (req, res) => {
   }
   // dont care about older ones
   let last20Tarjetas = processed.slice(0, 20);
+  const selectedIds = getSelectedIds(last20Tarjetas);
   last20Tarjetas = last20Tarjetas.map((tarjeta) => ({
     ...tarjeta,
-    selected: isTarjetaSelected({ id: tarjeta.id, tarjetas: last20Tarjetas }),
+    selected: selectedIds.includes(tarjeta.id),
   }));
   const tarjetas = [...unprocessed, ...last20Tarjetas];
   const nextHandicapIndex =

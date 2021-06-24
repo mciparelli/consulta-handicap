@@ -30,7 +30,7 @@ function hexToRGB(hex, alpha) {
   }
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   tableRow: {
     '&.unprocessed': {
       backgroundColor: hexToRGB(theme.palette.warning.light, 0.2),
@@ -55,7 +55,7 @@ const Tarjetas = ({
   const [orderBy, setOrderBy] = useState('fecha');
   const [ascSort, setAscSort] = useState(false);
   const sortDirection = ascSort ? 'asc' : 'desc';
-  const sortBy = newOrderBy => {
+  const sortBy = (newOrderBy) => {
     setOrderBy(newOrderBy);
     setAscSort(newOrderBy === orderBy ? !ascSort : true);
   };
@@ -156,7 +156,7 @@ const Tarjetas = ({
                   <TableSortLabel
                     active={orderBy === 'fecha'}
                     direction={orderBy === 'fecha' ? sortDirection : undefined}
-                    onClick={_ev => sortBy('fecha')}
+                    onClick={(_ev) => sortBy('fecha')}
                   >
                     Fecha
                   </TableSortLabel>
@@ -165,7 +165,7 @@ const Tarjetas = ({
                   <TableSortLabel
                     active={orderBy === 'club'}
                     direction={orderBy === 'club' ? sortDirection : undefined}
-                    onClick={_ev => sortBy('club')}
+                    onClick={(_ev) => sortBy('club')}
                   >
                     Club
                   </TableSortLabel>
@@ -174,7 +174,7 @@ const Tarjetas = ({
                   <TableSortLabel
                     active={orderBy === 'score'}
                     direction={orderBy === 'score' ? sortDirection : undefined}
-                    onClick={_ev => sortBy('score')}
+                    onClick={(_ev) => sortBy('score')}
                   >
                     Score
                   </TableSortLabel>
@@ -186,7 +186,7 @@ const Tarjetas = ({
                       direction={
                         orderBy === 'calificacion' ? sortDirection : undefined
                       }
-                      onClick={_ev => sortBy('calificacion')}
+                      onClick={(_ev) => sortBy('calificacion')}
                     >
                       Calificación
                     </TableSortLabel>
@@ -197,7 +197,7 @@ const Tarjetas = ({
                       direction={
                         orderBy === 'slope' ? sortDirection : undefined
                       }
-                      onClick={_ev => sortBy('slope')}
+                      onClick={(_ev) => sortBy('slope')}
                     >
                       Slope
                     </TableSortLabel>
@@ -206,7 +206,7 @@ const Tarjetas = ({
                     <TableSortLabel
                       active={orderBy === 'pcc'}
                       direction={orderBy === 'pcc' ? sortDirection : undefined}
-                      onClick={_ev => sortBy('pcc')}
+                      onClick={(_ev) => sortBy('pcc')}
                     >
                       PCC
                     </TableSortLabel>
@@ -217,7 +217,7 @@ const Tarjetas = ({
                       direction={
                         orderBy === 'score-adj' ? sortDirection : undefined
                       }
-                      onClick={_ev => sortBy('score-adj')}
+                      onClick={(_ev) => sortBy('score-adj')}
                     >
                       Score Ajustado
                     </TableSortLabel>
@@ -228,7 +228,7 @@ const Tarjetas = ({
                     <TableSortLabel
                       active={orderBy === 'dif'}
                       direction={orderBy === 'dif' ? sortDirection : undefined}
-                      onClick={_ev => sortBy('dif')}
+                      onClick={(_ev) => sortBy('dif')}
                     >
                       Diferencial Ajustado
                       <Box ml={1}>
@@ -242,7 +242,7 @@ const Tarjetas = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedTarjetas.map(tarjeta => (
+              {sortedTarjetas.map((tarjeta) => (
                 <TableRow
                   className={`${tarjeta.processed ? '' : 'unprocessed'} ${
                     tarjeta.selected ? 'selected' : ''
@@ -260,9 +260,7 @@ const Tarjetas = ({
                       {tarjeta.adjustedScore}
                     </TableCell>
                   </Hidden>
-                  <TableCell align="center">
-                    {tarjeta.diferencialPretty}
-                  </TableCell>
+                  <TableCell align="center">{tarjeta.diferencial}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
