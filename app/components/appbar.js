@@ -6,6 +6,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { Link } from 'remix';
 
 export default function AppBar({ children }) {
   const theme = useTheme();
@@ -22,7 +23,7 @@ export default function AppBar({ children }) {
             justifyContent: "space-between",
           }}
         >
-          <Typography sx={{ py: 1 }} variant="h5">
+          <Typography component={Link} sx={{ py: 1 }} variant="h5" to="/">
             Consulta de Hándicap
           </Typography>
           {children}
