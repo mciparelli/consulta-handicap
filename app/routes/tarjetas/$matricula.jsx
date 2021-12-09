@@ -20,17 +20,13 @@ import { useTheme } from "@mui/material/styles";
 import { findPlayersFromVista, getTarjetas } from "~/api";
 import { daysToSeconds, hexToRGB } from "~/utils";
 
-export async function loader({ params: { matricula }, request }) {
+export async function loader({ params: { matricula } }) {
   invariant(matricula, "expected matricula");
-  const url = new URL(request.url);
-  let playerInfo = Object.fromEntries(url.searchParams);
-  const { fullName, club, handicapIndex } = playerInfo;
-  const hasParams = Boolean(fullName && club && handicapIndex);
   const tarjetas = await getTarjetas(matricula);
-  if (!hasParams) {
-    [playerInfo] = await findPlayersFromVista(matricula);
-  }
-  return { tarjetas, playerInfo };
+  const [{ fullName, club, handicapIndex }] = await findPlayersFromVista(
+    matricula
+  );
+  return { tarjetas, fullName, club, handicapIndex };
 }
 
 export function headers() {
@@ -43,10 +39,7 @@ export function headers() {
 
 export default function Tarjetas() {
   const { matricula } = useParams();
-  const {
-    tarjetas,
-    playerInfo: { fullName, club, handicapIndex },
-  } = useLoaderData();
+  const { tarjetas, fullName, club, handicapIndex } = useLoaderData();
   const theme = useTheme();
   const [orderBy, setOrderBy] = useState("fecha");
   const [ascSort, setAscSort] = useState(false);

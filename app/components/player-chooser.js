@@ -55,12 +55,6 @@ export default function PlayerChooser({ loading, players }) {
             props,
             { matricula, fullName, club, handicapIndex }
           ) => {
-            const params = new URLSearchParams({
-              searchString,
-              fullName,
-              club,
-              handicapIndex,
-            });
             return (
               <Tooltip
                 key={matricula}
@@ -74,7 +68,7 @@ export default function PlayerChooser({ loading, players }) {
               >
                 <Link
                   reloadDocument
-                  to={`/tarjetas/${matricula}?${params.toString()}`}
+                  to={`/tarjetas/${matricula}`}
                   onClick={(ev) => {
                     ev.stopPropagation();
                     setOpen(false);
