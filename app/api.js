@@ -1,4 +1,6 @@
 import cheerio from "cheerio";
+import cache from '~/cache';
+import { daysToSeconds } from '~/utils';
 
 const baseUrl = "https://www.aag.org.ar/cake/Usuarios/getTarjetas";
 
@@ -62,6 +64,9 @@ const calcHandicapIndex = (tarjetas) => {
 };
 
 const getTarjetas = async (matricula) => {
+  const cacheKey = `hcp:tarjetas:${matricula}`;
+  const cacheValue = await cache.json.get(cacheKey);
+  if (cacheValue) return cacheValue
   const response = await fetch(`${baseUrl}/${matricula}`);
   const result = await response.json();
 
@@ -110,10 +115,15 @@ const getTarjetas = async (matricula) => {
     ...tarjeta,
     selected: selectedIds.includes(tarjeta.id),
   }));
-  return [...unprocessed, ...last20Tarjetas];
+  const tarjetas = [...unprocessed, ...last20Tarjetas];
+  await cache.json.setex(cacheKey, daysToSeconds(1), tarjetas);
+  return tarjetas;
 };
 
 const findPlayersFromVista = async (searchString) => {
+  const cacheKey = `hcp:search:${searchString}`;
+  const cacheValue = await cache.json.get(cacheKey);
+  if (cacheValue) return cacheValue
   const url = "http://www.vistagolf.com.ar/handicap/FiltroArg.asp";
 
   const isOnlyNumbers = /^\d+$/.test(searchString);
@@ -137,6 +147,7 @@ const findPlayersFromVista = async (searchString) => {
       };
     })
     .get();
+  await cache.json.setex(cacheKey, daysToSeconds(1), players);
   return players;
 };
 
