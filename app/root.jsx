@@ -9,12 +9,14 @@ import {
   useCatch,
   useTransition,
   useLoaderData,
+  json,
 } from "remix";
 import { Box, LinearProgress, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AppBar from "~/components/appbar";
 import PlayerChooser from "~/components/player-chooser";
 import { findPlayersFromVista } from "~/api";
+import { daysToSeconds } from "~/utils";
 
 import globalStylesUrl from "~/styles/global.css";
 
@@ -29,11 +31,18 @@ export let links = () => {
   return [{ rel: "stylesheet", href: globalStylesUrl }];
 };
 
-export function loader({ request }) {
+export async function loader({ request }) {
   const url = new URL(request.url);
   const query = url.searchParams.get("searchString");
   if (!query) return null;
-  return findPlayersFromVista(query);
+  const players = await findPlayersFromVista(query);
+  return json(players, {
+    headers: {
+      "Cache-Control": `max-age=${30}, s-maxage=${30}, stale-while-revalidate=${daysToSeconds(
+        6
+      )}`,
+    },
+  });
 }
 
 function Layout({ loading, players, children }) {
