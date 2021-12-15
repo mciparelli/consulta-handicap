@@ -116,7 +116,7 @@ const getTarjetas = async (matricula) => {
     selected: selectedIds.includes(tarjeta.id),
   }));
   const tarjetas = [...unprocessed, ...last20Tarjetas];
-  await cache.json.setex(cacheKey, daysToSeconds(1), tarjetas);
+  await cache.json.setex(cacheKey, daysToSeconds(0.4), tarjetas);
   return tarjetas;
 };
 
@@ -147,7 +147,7 @@ const findPlayersFromVista = async (searchString) => {
       };
     })
     .get();
-  await cache.json.setex(cacheKey, daysToSeconds(1), players);
+  await cache.json.setex(cacheKey, daysToSeconds(0.4), players);
   return players;
 };
 
