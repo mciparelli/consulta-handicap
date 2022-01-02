@@ -67,6 +67,7 @@ export default function PlayerChooser({ loading, players }) {
                 {...props}
               >
                 <Link
+                  prefetch="intent"
                   reloadDocument
                   to={`/tarjetas/${matricula}`}
                   onClick={(ev) => {

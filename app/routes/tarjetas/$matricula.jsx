@@ -268,6 +268,16 @@ export default function Tarjetas() {
   );
 }
 
+export function ErrorBoundary({ error }) {
+  return (
+    <Box sx={{ m: "auto", p: 2, textAlign: "center" }}>
+      <Typography variant="h4">
+        Hubo un error al buscar las tarjetas de este jugador. Intente más tarde.
+      </Typography>
+    </Box>
+  );
+}
+
 export function unstable_shouldReload() {
   // only reload on full page change
   return false;
