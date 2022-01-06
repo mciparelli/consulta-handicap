@@ -1,4 +1,4 @@
-const baseUrl = 'https://consulta-handicap.vercel.app/api/';
+const baseUrl = 'https://consulta-handicap-q4y9efefc-mciparelli.vercel.app/api/';
 
 const getPlayers = (searchString) =>
 	`${baseUrl}get-players?searchString=${searchString}`;
