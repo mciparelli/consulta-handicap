@@ -31,7 +31,7 @@ export async function loader({ params: { matricula } }) {
 
 export function headers() {
   return {
-    "Cache-Control": `max-age=${daysToSeconds(1)}, s-maxage=${daysToSeconds(
+    "Cache-Control": `max-age=1, s-maxage=${daysToSeconds(
       1
     )}, stale-while-revalidate=${daysToSeconds(6)}`,
   };

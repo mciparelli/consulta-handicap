@@ -38,7 +38,7 @@ export async function loader({ request }) {
   const players = await findPlayersFromVista(query);
   return json(players, {
     headers: {
-      "Cache-Control": `max-age=${30}, s-maxage=${30}, stale-while-revalidate=${daysToSeconds(
+      "Cache-Control": `max-age=1, s-maxage=1, stale-while-revalidate=${daysToSeconds(
         6
       )}`,
     },
