@@ -1,4 +1,4 @@
-import { useLoaderData, useParams } from "remix";
+import { useLoaderData, useParams, json } from "remix";
 import invariant from "tiny-invariant";
 import React, { useMemo, useState } from "react";
 import {
@@ -26,15 +26,7 @@ export async function loader({ params: { matricula } }) {
   const [{ fullName, club, handicapIndex }] = await findPlayersFromVista(
     matricula
   );
-  return { tarjetas, fullName, club, handicapIndex };
-}
-
-export function headers() {
-  return {
-    "Cache-Control": `max-age=1, s-maxage=${daysToSeconds(
-      1
-    )}, stale-while-revalidate=${daysToSeconds(6)}`,
-  };
+  return json({ tarjetas, fullName, club, handicapIndex });
 }
 
 export default function Tarjetas() {

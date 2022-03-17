@@ -36,13 +36,7 @@ export async function loader({ request }) {
   const query = url.searchParams.get("searchString");
   if (!query) return null;
   const players = await findPlayersFromVista(query);
-  return json(players, {
-    headers: {
-      "Cache-Control": `max-age=1, s-maxage=1, stale-while-revalidate=${daysToSeconds(
-        6
-      )}`,
-    },
-  });
+  return json(players);
 }
 
 function Layout({ loading, players, children }) {

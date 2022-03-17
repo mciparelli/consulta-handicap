@@ -11,11 +11,11 @@ function hexToRGB(hex, alpha) {
 }
 
 function daysToSeconds(days) {
-  return 60 * 60 *24 * days;
+  return 60 * 60 * 24 * days;
 }
 
 function yearsToSeconds(years) {
   return daysToSeconds(years * 365);
 }
 
-export { hexToRGB, yearsToSeconds, daysToSeconds }
+export { hexToRGB, yearsToSeconds, daysToSeconds };

@@ -1,6 +1,6 @@
 import cheerio from "cheerio";
-import cache from '~/cache';
-import { daysToSeconds } from '~/utils';
+import cache from "~/cache";
+import { daysToSeconds } from "~/utils";
 
 const baseUrl = "https://www.aag.org.ar/cake/Usuarios/getTarjetas";
 
@@ -66,7 +66,7 @@ const calcHandicapIndex = (tarjetas) => {
 const getTarjetas = async (matricula) => {
   const cacheKey = `hcp:tarjetas:${matricula}`;
   const cacheValue = await cache.json.get(cacheKey);
-  if (cacheValue) return cacheValue
+  if (cacheValue) return cacheValue;
   const response = await fetch(`${baseUrl}/${matricula}`);
   const result = await response.json();
 
@@ -78,9 +78,8 @@ const getTarjetas = async (matricula) => {
     const PCC = tarjeta.PCC;
     const diferencial = tarjeta.Diferencial;
     const date = new Date(tarjeta.FechaTorneo);
-    const formattedDate = `${date.getDate()}/${
-      date.getMonth() + 1
-    }/${date.getFullYear()}`;
+    const formattedDate = `${date.getDate()}/${date.getMonth() +
+      1}/${date.getFullYear()}`;
     const idTarjeta = `${clubId}-${formattedDate}-${diferencial}`;
     return {
       id: idTarjeta,
@@ -123,7 +122,7 @@ const getTarjetas = async (matricula) => {
 const findPlayersFromVista = async (searchString) => {
   const cacheKey = `hcp:search:${searchString}`;
   const cacheValue = await cache.json.get(cacheKey);
-  if (cacheValue) return cacheValue
+  if (cacheValue) return cacheValue;
   const url = "http://www.vistagolf.com.ar/handicap/FiltroArg.asp";
 
   const isOnlyNumbers = /^\d+$/.test(searchString);
@@ -137,7 +136,11 @@ const findPlayersFromVista = async (searchString) => {
     .slice(2)
     .map((index, element) => {
       const [matricula, fullName, handicapIndex, club] = $("td", element)
-        .map((index, el) => $(el).text().trim())
+        .map((index, el) =>
+          $(el)
+            .text()
+            .trim()
+        )
         .get();
       return {
         matricula,
