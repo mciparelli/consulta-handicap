@@ -64,6 +64,11 @@ export default function App() {
           },
         },
       },
+      MuiHidden: {
+        defaultProps: {
+          implementation: 'css'
+        }
+      }
     },
   });
   return (
