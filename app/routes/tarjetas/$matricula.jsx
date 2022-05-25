@@ -61,10 +61,6 @@ export default function Tarjetas() {
             value = a.slopeRating - b.slopeRating;
             break;
           }
-          case "pcc": {
-            value = a.PCC - b.PCC;
-            break;
-          }
           case "score-adj": {
             value = a.adjustedScore - b.adjustedScore;
             break;
@@ -180,15 +176,6 @@ export default function Tarjetas() {
                     Slope
                   </TableSortLabel>
                 </TableCell>
-                <TableCell align="center">
-                  <TableSortLabel
-                    active={orderBy === "pcc"}
-                    direction={orderBy === "pcc" ? sortDirection : undefined}
-                    onClick={(_ev) => sortBy("pcc")}
-                  >
-                    PCC
-                  </TableSortLabel>
-                </TableCell>
               </Hidden>
               <TableCell align="center">
                 <Tooltip title="(113 / Slope) x (Score Ajustado – Calificación - PCC)">
@@ -225,11 +212,10 @@ export default function Tarjetas() {
                 >
                   <TableCell align="left">{tarjeta.formattedDate}</TableCell>
                   <TableCell align="left">{tarjeta.clubName.trim()}</TableCell>
-                  <TableCell align="center">{tarjeta.score}{tarjeta.adjustedScore !== tarjeta.score && ` (${tarjeta.adjustedScore})`}</TableCell>
+                  <TableCell align="center">{tarjeta.score}{tarjeta.adjustedScore !== tarjeta.score && ` (${tarjeta.adjustedScore})`}{tarjeta.PCC > 0 ? ` PCC ${tarjeta.PCC}` : ''}</TableCell>
                   <Hidden smDown>
                     <TableCell align="center">{tarjeta.courseRating}</TableCell>
                     <TableCell align="center">{tarjeta.slopeRating}</TableCell>
-                    <TableCell align="center">{tarjeta.PCC}</TableCell>
                   </Hidden>
                   <TableCell align="center">
                     {tarjeta.diferencial.toFixed(1)}
