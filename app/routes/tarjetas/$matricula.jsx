@@ -53,10 +53,6 @@ export default function Tarjetas() {
             value = a.clubName.localeCompare(b.clubName);
             break;
           }
-          case "score": {
-            value = a.score - b.score;
-            break;
-          }
           case "calificacion": {
             value = a.courseRating - b.courseRating;
             break;
@@ -154,11 +150,13 @@ export default function Tarjetas() {
               </TableCell>
               <TableCell align="center">
                 <TableSortLabel
-                  active={orderBy === "score"}
-                  direction={orderBy === "score" ? sortDirection : undefined}
-                  onClick={(_ev) => sortBy("score")}
+                  active={orderBy === "score-adj"}
+                  direction={
+                    orderBy === "score-adj" ? sortDirection : undefined
+                  }
+                  onClick={(_ev) => sortBy("score-adj")}
                 >
-                  Score
+                  Score (ajustado)
                 </TableSortLabel>
               </TableCell>
               <Hidden smDown>
@@ -189,17 +187,6 @@ export default function Tarjetas() {
                     onClick={(_ev) => sortBy("pcc")}
                   >
                     PCC
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell align="center">
-                  <TableSortLabel
-                    active={orderBy === "score-adj"}
-                    direction={
-                      orderBy === "score-adj" ? sortDirection : undefined
-                    }
-                    onClick={(_ev) => sortBy("score-adj")}
-                  >
-                    Score Ajustado
                   </TableSortLabel>
                 </TableCell>
               </Hidden>
@@ -238,14 +225,11 @@ export default function Tarjetas() {
                 >
                   <TableCell align="left">{tarjeta.formattedDate}</TableCell>
                   <TableCell align="left">{tarjeta.clubName.trim()}</TableCell>
-                  <TableCell align="center">{tarjeta.score}</TableCell>
+                  <TableCell align="center">{tarjeta.score}{tarjeta.adjustedScore !== tarjeta.score && ` (${tarjeta.adjustedScore})`}</TableCell>
                   <Hidden smDown>
                     <TableCell align="center">{tarjeta.courseRating}</TableCell>
                     <TableCell align="center">{tarjeta.slopeRating}</TableCell>
                     <TableCell align="center">{tarjeta.PCC}</TableCell>
-                    <TableCell align="center">
-                      {tarjeta.adjustedScore}
-                    </TableCell>
                   </Hidden>
                   <TableCell align="center">
                     {tarjeta.diferencial.toFixed(1)}
