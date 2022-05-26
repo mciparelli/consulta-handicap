@@ -218,7 +218,7 @@ export default function Tarjetas() {
                     <TableCell align="center">{tarjeta.slopeRating}</TableCell>
                   </Hidden>
                   <TableCell align="center">
-                    {tarjeta.diferencial.toFixed(1)}
+                    {tarjeta.diferencial.toFixed(1)}{tarjeta.is9Holes ? '*' : undefined}
                   </TableCell>
                 </TableRow>
               );
