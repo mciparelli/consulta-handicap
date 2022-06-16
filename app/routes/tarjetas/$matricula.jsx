@@ -83,7 +83,7 @@ export default function Tarjetas() {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h5" component="p" sx={{ py: 2, display: "flex" }}>
-        <Box component="span" sx={{ display: { xs: "none", sm: "flex" } }}>
+        <Box component="span" sx={{ mr:1, display: { xs: "none", sm: "flex" } }}>
           {fullName} ({club}).{" "}
         </Box>
         Matrícula {matricula}.{" "}
