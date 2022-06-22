@@ -1,6 +1,6 @@
-import { useLoaderData, useParams, json } from "remix";
-import invariant from "tiny-invariant";
-import React, { useMemo, useState } from "react";
+import { useLoaderData, useParams, json } from 'remix';
+import invariant from 'tiny-invariant';
+import React, { useMemo, useState } from 'react';
 import {
   Box,
   Table,
@@ -13,15 +13,15 @@ import {
   Tooltip,
   Typography,
   Hidden,
-  Paper,
-} from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
-import { useTheme } from "@mui/material/styles";
-import { findPlayersFromVista, getTarjetas } from "~/api";
-import { daysToSeconds, hexToRGB } from "~/utils";
+  Paper
+} from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import { useTheme } from '@mui/material/styles';
+import { findPlayersFromVista, getTarjetas } from '~/api';
+import { daysToSeconds, hexToRGB } from '~/utils';
 
 export async function loader({ params: { matricula } }) {
-  invariant(matricula, "expected matricula");
+  invariant(matricula, 'expected matricula');
   const tarjetas = await getTarjetas(matricula);
   const [{ fullName, club, handicapIndex }] = await findPlayersFromVista(
     matricula
@@ -30,13 +30,14 @@ export async function loader({ params: { matricula } }) {
 }
 
 export default function Tarjetas() {
+  const hideMobileStyles = { display: { sm: 'none', md: 'table-cell' } };
   const { matricula } = useParams();
   const { tarjetas, fullName, club, handicapIndex } = useLoaderData();
   const theme = useTheme();
-  const [orderBy, setOrderBy] = useState("fecha");
+  const [orderBy, setOrderBy] = useState('fecha');
   const [ascSort, setAscSort] = useState(false);
-  const sortDirection = ascSort ? "asc" : "desc";
-  const sortBy = (newOrderBy) => {
+  const sortDirection = ascSort ? 'asc' : 'desc';
+  const sortBy = newOrderBy => {
     setOrderBy(newOrderBy);
     setAscSort(newOrderBy === orderBy ? !ascSort : true);
   };
@@ -45,27 +46,27 @@ export default function Tarjetas() {
       tarjetas.sort((a, b) => {
         let value;
         switch (orderBy) {
-          case "fecha": {
+          case 'fecha': {
             value = new Date(a.isoDate) - new Date(b.isoDate);
             break;
           }
-          case "club": {
+          case 'club': {
             value = a.clubName.localeCompare(b.clubName);
             break;
           }
-          case "calificacion": {
+          case 'calificacion': {
             value = a.courseRating - b.courseRating;
             break;
           }
-          case "slope": {
+          case 'slope': {
             value = a.slopeRating - b.slopeRating;
             break;
           }
-          case "score-adj": {
+          case 'score-adj': {
             value = a.adjustedScore - b.adjustedScore;
             break;
           }
-          case "dif": {
+          case 'dif': {
             value = a.diferencial - b.diferencial;
             break;
           }
@@ -82,12 +83,15 @@ export default function Tarjetas() {
     );
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h5" component="p" sx={{ py: 2, display: "flex" }}>
-        <Box component="span" sx={{ mr:1, display: { xs: "none", sm: "flex" } }}>
-          {fullName} ({club}).{" "}
+      <Typography variant="h5" component="p" sx={{ py: 2, display: 'flex' }}>
+        <Box
+          component="span"
+          sx={{ mr: 1, display: { xs: 'none', sm: 'flex' } }}
+        >
+          {fullName} ({club}).{' '}
         </Box>
-        Matrícula {matricula}.{" "}
-        <Box sx={{ ml: "auto", textAlign: "right" }} component="span">
+        Matrícula {matricula}.{' '}
+        <Box sx={{ ml: 'auto', textAlign: 'right' }} component="span">
           Hándicap Index: {handicapIndex}
           {/*nextHandicapIndex && (
               <Box>
@@ -99,14 +103,14 @@ export default function Tarjetas() {
             )*/}
         </Box>
       </Typography>
-      <Box sx={{ display: "flex", py: 2 }}>
+      <Box sx={{ display: 'flex', py: 2 }}>
         <Box
           sx={{
             mr: 1,
             borderRadius: 1,
             width: 40,
             height: 20,
-            bgcolor: theme.palette.success.light,
+            bgcolor: theme.palette.success.light
           }}
         ></Box>
         <Typography>Ocho mejores</Typography>
@@ -117,7 +121,7 @@ export default function Tarjetas() {
             borderRadius: 1,
             width: 40,
             height: 20,
-            bgcolor: hexToRGB(theme.palette.warning.light, 0.2),
+            bgcolor: hexToRGB(theme.palette.warning.light, 0.2)
           }}
         ></Box>
         <Typography>Ingresan el próximo jueves</Typography>
@@ -128,61 +132,59 @@ export default function Tarjetas() {
             <TableRow>
               <TableCell align="left">
                 <TableSortLabel
-                  active={orderBy === "fecha"}
-                  direction={orderBy === "fecha" ? sortDirection : undefined}
-                  onClick={(_ev) => sortBy("fecha")}
+                  active={orderBy === 'fecha'}
+                  direction={orderBy === 'fecha' ? sortDirection : undefined}
+                  onClick={_ev => sortBy('fecha')}
                 >
                   Fecha
                 </TableSortLabel>
               </TableCell>
               <TableCell align="left">
                 <TableSortLabel
-                  active={orderBy === "club"}
-                  direction={orderBy === "club" ? sortDirection : undefined}
-                  onClick={(_ev) => sortBy("club")}
+                  active={orderBy === 'club'}
+                  direction={orderBy === 'club' ? sortDirection : undefined}
+                  onClick={_ev => sortBy('club')}
                 >
                   Club
                 </TableSortLabel>
               </TableCell>
               <TableCell align="center">
                 <TableSortLabel
-                  active={orderBy === "score-adj"}
+                  active={orderBy === 'score-adj'}
                   direction={
-                    orderBy === "score-adj" ? sortDirection : undefined
+                    orderBy === 'score-adj' ? sortDirection : undefined
                   }
-                  onClick={(_ev) => sortBy("score-adj")}
+                  onClick={_ev => sortBy('score-adj')}
                 >
                   Score (ajustado)
                 </TableSortLabel>
               </TableCell>
-              <Hidden smDown>
-                <TableCell align="center">
-                  <TableSortLabel
-                    active={orderBy === "calificacion"}
-                    direction={
-                      orderBy === "calificacion" ? sortDirection : undefined
-                    }
-                    onClick={(_ev) => sortBy("calificacion")}
-                  >
-                    Calificación
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell align="center">
-                  <TableSortLabel
-                    active={orderBy === "slope"}
-                    direction={orderBy === "slope" ? sortDirection : undefined}
-                    onClick={(_ev) => sortBy("slope")}
-                  >
-                    Slope
-                  </TableSortLabel>
-                </TableCell>
-              </Hidden>
+              <TableCell align="center" sx={hideMobileStyles}>
+                <TableSortLabel
+                  active={orderBy === 'calificacion'}
+                  direction={
+                    orderBy === 'calificacion' ? sortDirection : undefined
+                  }
+                  onClick={_ev => sortBy('calificacion')}
+                >
+                  Calificación
+                </TableSortLabel>
+              </TableCell>
+              <TableCell align="center" sx={hideMobileStyles}>
+                <TableSortLabel
+                  active={orderBy === 'slope'}
+                  direction={orderBy === 'slope' ? sortDirection : undefined}
+                  onClick={_ev => sortBy('slope')}
+                >
+                  Slope
+                </TableSortLabel>
+              </TableCell>
               <TableCell align="center">
                 <Tooltip title="(113 / Slope) x (Score Ajustado – Calificación - PCC)">
                   <TableSortLabel
-                    active={orderBy === "dif"}
-                    direction={orderBy === "dif" ? sortDirection : undefined}
-                    onClick={(_ev) => sortBy("dif")}
+                    active={orderBy === 'dif'}
+                    direction={orderBy === 'dif' ? sortDirection : undefined}
+                    onClick={_ev => sortBy('dif')}
                   >
                     Diferencial Ajustado
                     <Box ml={1}>
@@ -196,7 +198,7 @@ export default function Tarjetas() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedTarjetas.map((tarjeta) => {
+            {sortedTarjetas.map(tarjeta => {
               let backgroundColor;
               if (!tarjeta.processed) {
                 backgroundColor = hexToRGB(theme.palette.warning.light, 0.2);
@@ -206,19 +208,27 @@ export default function Tarjetas() {
               return (
                 <TableRow
                   sx={{
-                    backgroundColor,
+                    backgroundColor
                   }}
                   key={tarjeta.id}
                 >
                   <TableCell align="left">{tarjeta.formattedDate}</TableCell>
                   <TableCell align="left">{tarjeta.clubName.trim()}</TableCell>
-                  <TableCell align="center">{tarjeta.score}{tarjeta.adjustedScore !== tarjeta.score && ` (${tarjeta.adjustedScore})`}{tarjeta.PCC > 0 ? ` PCC ${tarjeta.PCC}` : ''}</TableCell>
-                  <Hidden smDown>
-                    <TableCell align="center">{tarjeta.courseRating}</TableCell>
-                    <TableCell align="center">{tarjeta.slopeRating}</TableCell>
-                  </Hidden>
                   <TableCell align="center">
-                    {tarjeta.diferencial.toFixed(1)}{tarjeta.is9Holes ? '*' : undefined}
+                    {tarjeta.score}
+                    {tarjeta.adjustedScore !== tarjeta.score &&
+                      ` (${tarjeta.adjustedScore})`}
+                    {tarjeta.PCC > 0 ? ` PCC ${tarjeta.PCC}` : ''}
+                  </TableCell>
+                  <TableCell sx={hideMobileStyles} align="center">
+                    {tarjeta.courseRating}
+                  </TableCell>
+                  <TableCell sx={hideMobileStyles} align="center">
+                    {tarjeta.slopeRating}
+                  </TableCell>
+                  <TableCell align="center">
+                    {tarjeta.diferencial.toFixed(1)}
+                    {tarjeta.is9Holes ? '*' : undefined}
                   </TableCell>
                 </TableRow>
               );
@@ -232,7 +242,7 @@ export default function Tarjetas() {
 
 export function ErrorBoundary({ error }) {
   return (
-    <Box sx={{ m: "auto", p: 2, textAlign: "center" }}>
+    <Box sx={{ m: 'auto', p: 2, textAlign: 'center' }}>
       <Typography variant="h4">
         Hubo un error al buscar las tarjetas de este jugador. Intente más tarde.
       </Typography>
