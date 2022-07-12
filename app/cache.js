@@ -12,4 +12,4 @@ const json = {
   set: (key, value) => client.set(key, JSON.stringify(value)),
   setex: (key, expSeconds, value) => client.setEx(key, expSeconds, JSON.stringify(value)),
 };
-export default { json };
+export default { json, db: client };

@@ -48,7 +48,7 @@ const calcHandicapIndex = (tarjetas) => {
   let tarjetas18Holes = tarjetas.filter((tarjeta) => !tarjeta.is9Holes);
 
   const diferenciales18Holes = tarjetas18Holes.map(
-    (tarjeta) => tarjeta.diferencial
+    (tarjeta) => tarjeta.diferencial,
   );
 
   const diferencialesToConsider = [
@@ -78,8 +78,10 @@ const getTarjetas = async (matricula) => {
     const PCC = tarjeta.PCC;
     const diferencial = tarjeta.Diferencial;
     const date = new Date(tarjeta.FechaTorneo);
-    const formattedDate = `${date.getDate()}/${date.getMonth() +
-      1}/${date.getFullYear()}`;
+    const formattedDate = `${date.getDate()}/${
+      date.getMonth() +
+      1
+    }/${date.getFullYear()}`;
     const idTarjeta = `${clubId}-${formattedDate}-${diferencial}`;
     return {
       id: idTarjeta,
@@ -123,6 +125,16 @@ const findPlayersFromVista = async (searchString) => {
   const cacheKey = `hcp:search:${searchString}`;
   const cacheValue = await cache.json.get(cacheKey);
   if (cacheValue) return cacheValue;
+
+  let lastThurs = new Date();
+  lastThurs.setDate(
+    lastThurs.getDate() - (lastThurs.getDay() + 3) % 7,
+    0,
+    0,
+    0,
+  );
+  lastThurs.setUTCHours(0, 0, 0, 0);
+  const lastThursMs = lastThurs.getTime();
   const url = "http://www.vistagolf.com.ar/handicap/FiltroArg.asp";
 
   const isOnlyNumbers = /^\d+$/.test(searchString);
@@ -150,8 +162,14 @@ const findPlayersFromVista = async (searchString) => {
       };
     })
     .get();
+  for (const player of players) {
+    await cache.db.ZADD(`hcp:historic:${player.matricula}`, {
+      score: lastThursMs,
+      value: `${player.handicapIndex}:${lastThursMs}`,
+    });
+  }
   await cache.json.setex(cacheKey, daysToSeconds(0.4), players);
   return players;
 };
 
-export { getTarjetas, findPlayersFromVista };
+export { findPlayersFromVista, getTarjetas };
