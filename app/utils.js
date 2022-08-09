@@ -18,4 +18,4 @@ function yearsToSeconds(years) {
   return daysToSeconds(years * 365);
 }
 
-export { hexToRGB, yearsToSeconds, daysToSeconds };
+export { daysToSeconds, hexToRGB, yearsToSeconds };

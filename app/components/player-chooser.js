@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import {
-  Box,
   Autocomplete,
-  TextField,
-  Typography,
+  Box,
   CircularProgress,
+  TextField,
   Tooltip,
+  Typography,
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -36,11 +36,9 @@ export default function PlayerChooser({ loading, players }) {
             "& .MuiAutocomplete-inputRoot": { backgroundColor: "common.white" },
           }}
           id="get-players"
-          noOptionsText={
-            players?.length === 0
-              ? "No se encontraron jugadores"
-              : "Ingrese matrícula o apellido"
-          }
+          noOptionsText={players?.length === 0
+            ? "No se encontraron jugadores"
+            : "Ingrese matrícula o apellido"}
           loadingText="Buscando jugadores..."
           open={open}
           onOpen={() => {
@@ -53,7 +51,7 @@ export default function PlayerChooser({ loading, players }) {
           filterOptions={(options) => options}
           renderOption={(
             props,
-            { matricula, fullName, club, handicapIndex }
+            { matricula, fullName, club, handicapIndex },
           ) => {
             return (
               <Tooltip
@@ -96,9 +94,9 @@ export default function PlayerChooser({ loading, players }) {
                 ...params.InputProps,
                 endAdornment: (
                   <React.Fragment>
-                    {loading ? (
-                      <CircularProgress color="inherit" size={20} />
-                    ) : null}
+                    {loading
+                      ? <CircularProgress color="inherit" size={20} />
+                      : null}
                     {params.InputProps.endAdornment}
                   </React.Fragment>
                 ),

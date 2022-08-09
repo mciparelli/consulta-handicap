@@ -1,10 +1,9 @@
-import cheerio from "cheerio";
 import cache from "~/cache";
 import { daysToSeconds } from "~/utils";
 
 const baseUrl = "https://www.aag.org.ar/cake/Usuarios/getTarjetas";
 
-const getSelectedIds = (tarjetas) => {
+function getSelectedIds(tarjetas) {
   const all9Holes = tarjetas
     .filter((tarjeta) => tarjeta.is9Holes)
     .sort((a, b) => a.diferencial - b.diferencial);
@@ -28,42 +27,9 @@ const getSelectedIds = (tarjetas) => {
     .map((t) => (t.is9 ? t.ids : t.id))
     .flat()
     .slice(0, 8);
-};
+}
 
-const calcHandicapIndex = (tarjetas) => {
-  const allDiferenciales9Holes = tarjetas
-    .filter((tarjeta) => tarjeta.is9Holes)
-    .map((tarjeta) => tarjeta.diferencial)
-    .sort((a, b) => a - b);
-  let diferenciales9Holes = [];
-  for (let i = 0; i < allDiferenciales9Holes.length; i += 2) {
-    if (allDiferenciales9Holes[i + 1]) {
-      diferenciales9Holes = [
-        ...diferenciales9Holes,
-        allDiferenciales9Holes[i] + allDiferenciales9Holes[i + 1],
-      ];
-    }
-  }
-
-  let tarjetas18Holes = tarjetas.filter((tarjeta) => !tarjeta.is9Holes);
-
-  const diferenciales18Holes = tarjetas18Holes.map(
-    (tarjeta) => tarjeta.diferencial,
-  );
-
-  const diferencialesToConsider = [
-    ...diferenciales9Holes,
-    ...diferenciales18Holes,
-  ];
-  return (
-    diferencialesToConsider
-      .sort((a, b) => a - b)
-      .slice(0, 8)
-      .reduce((acc, diferencial) => diferencial + acc, 0) / 8
-  ).toFixed(1);
-};
-
-const getTarjetas = async (matricula) => {
+async function getTarjetas(matricula) {
   const cacheKey = `hcp:tarjetas:${matricula}`;
   const cacheValue = await cache.json.get(cacheKey);
   if (cacheValue) return cacheValue;
@@ -119,57 +85,6 @@ const getTarjetas = async (matricula) => {
   const tarjetas = [...unprocessed, ...last20Tarjetas];
   await cache.json.setex(cacheKey, daysToSeconds(0.4), tarjetas);
   return tarjetas;
-};
+}
 
-const findPlayersFromVista = async (searchString) => {
-  const cacheKey = `hcp:search:${searchString}`;
-  const cacheValue = await cache.json.get(cacheKey);
-  if (cacheValue) return cacheValue;
-
-  let lastThurs = new Date();
-  lastThurs.setDate(
-    lastThurs.getDate() - (lastThurs.getDay() + 3) % 7,
-    0,
-    0,
-    0,
-  );
-  lastThurs.setUTCHours(0, 0, 0, 0);
-  const lastThursMs = lastThurs.getTime();
-  const url = "http://www.vistagolf.com.ar/handicap/FiltroArg.asp";
-
-  const isOnlyNumbers = /^\d+$/.test(searchString);
-  const params = new URLSearchParams();
-  const paramKey = isOnlyNumbers ? "TxtNroMatricula" : "TxtApellido";
-  params.append(paramKey, searchString);
-  const response = await fetch(url, { method: "POST", body: params });
-  const result = await response.textConverted();
-  const $ = cheerio.load(result);
-  const players = $("#table19 tr")
-    .slice(2)
-    .map((index, element) => {
-      const [matricula, fullName, handicapIndex, club] = $("td", element)
-        .map((index, el) =>
-          $(el)
-            .text()
-            .trim()
-        )
-        .get();
-      return {
-        matricula,
-        fullName,
-        handicapIndex: handicapIndex.replace(",", "."),
-        club,
-      };
-    })
-    .get();
-  for (const player of players) {
-    await cache.db.ZADD(`hcp:historic:${player.matricula}`, {
-      score: lastThursMs,
-      value: `${player.handicapIndex}:${lastThursMs}`,
-    });
-  }
-  await cache.json.setex(cacheKey, daysToSeconds(0.4), players);
-  return players;
-};
-
-export { findPlayersFromVista, getTarjetas };
+export { getTarjetas };

@@ -1,4 +1,5 @@
 import {
+  json,
   Link,
   Links,
   LiveReload,
@@ -7,9 +8,8 @@ import {
   Scripts,
   ScrollRestoration,
   useCatch,
-  useTransition,
   useLoaderData,
-  json,
+  useTransition,
 } from "remix";
 import { Box, LinearProgress, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -66,9 +66,9 @@ export default function App() {
       },
       MuiHidden: {
         defaultProps: {
-          implementation: 'css'
-        }
-      }
+          implementation: "css",
+        },
+      },
     },
   });
   return (
