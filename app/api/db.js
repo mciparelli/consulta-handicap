@@ -16,10 +16,14 @@ const threeMonthsAgoMs = threeMonthsAgoDate.getTime();
 
 const todayMs = (new Date()).getTime();
 
-function saveHistorico(matricula, handicapIndex) {
-  return cache.db.ZADD(`hcp:historic:${matricula}`, {
+async function saveHistorico(matricula, handicapIndex) {
+  const setKey = `hcp:historic:${matricula}`;
+  const value = `${handicapIndex}:${lastThursMs}`;
+  const score = await cache.db.ZSCORE(setKey, value);
+  if (score) return null;
+  return cache.db.ZADD(setKey, {
     score: lastThursMs,
-    value: `${handicapIndex}:${lastThursMs}`,
+    value,
   });
 }
 
