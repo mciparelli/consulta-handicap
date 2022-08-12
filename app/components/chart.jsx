@@ -30,8 +30,7 @@ export default function Chart({ data }) {
         }}
         colors={{ scheme: "category10" }}
         axisBottom={{
-          format: (date) =>
-            date.toLocaleDateString("es-AR", { month: "long", day: "numeric" }),
+          format: "%d-%m",
           tickValues: "every 7 days",
           tickPadding: 12
         }}
