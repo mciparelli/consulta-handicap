@@ -3,6 +3,12 @@ import cache from "~/cache";
 import { daysToSeconds } from "~/utils";
 import { saveHistorico } from "./db.js";
 
+async function savePlayersFound(players) {
+  for (const player of players) {
+    await saveHistorico(player.matricula, player.handicapIndex);
+  }
+}
+
 async function findPlayersFromVista(searchString) {
   const cacheKey = `hcp:search:${searchString}`;
   const cacheValue = await cache.json.get(cacheKey);
@@ -33,11 +39,8 @@ async function findPlayersFromVista(searchString) {
       };
     })
     .get();
-
-  for (const player of players) {
-    await saveHistorico(player.matricula, player.handicapIndex);
-  }
-  await cache.json.setex(cacheKey, daysToSeconds(0.4), players);
+  savePlayersFound(players);
+  cache.json.setex(cacheKey, daysToSeconds(0.4), players);
   return players;
 }
 

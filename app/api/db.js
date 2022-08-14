@@ -1,15 +1,5 @@
 import cache from "~/cache";
 
-let lastThurs = new Date();
-lastThurs.setDate(
-  lastThurs.getDate() - (lastThurs.getDay() + 3) % 7,
-  0,
-  0,
-  0,
-);
-lastThurs.setUTCHours(0, 0, 0, 0);
-const lastThursMs = lastThurs.getTime();
-
 let threeMonthsAgoDate = new Date();
 threeMonthsAgoDate.setMonth(threeMonthsAgoDate.getMonth() - 3);
 const threeMonthsAgoMs = threeMonthsAgoDate.getTime();
@@ -17,6 +7,12 @@ const threeMonthsAgoMs = threeMonthsAgoDate.getTime();
 const todayMs = (new Date()).getTime();
 
 async function saveHistorico(matricula, handicapIndex) {
+  let lastThurs = new Date();
+  while (lastThurs.getDay() !== 4) {
+    lastThurs.setDate(lastThurs.getDate() - 1);
+  }
+  lastThurs.setUTCHours(0, 0, 0, 0);
+  const lastThursMs = lastThurs.getTime();
   const setKey = `hcp:historic:${matricula}`;
   const value = `${handicapIndex}:${lastThursMs}`;
   const score = await cache.db.ZSCORE(setKey, value);
