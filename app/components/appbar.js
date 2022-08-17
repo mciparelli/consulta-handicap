@@ -6,9 +6,10 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { Link } from "remix";
+import { Link } from "@remix-run/react";
+import PlayerChooser from "./player-chooser";
 
-export default function AppBar({ children }) {
+export default function AppBar() {
   const theme = useTheme();
   const isMobile = useMediaQuery(() => theme.breakpoints.down("xs"));
   return (
@@ -26,7 +27,7 @@ export default function AppBar({ children }) {
           <Typography component={Link} sx={{ py: 1 }} variant="h5" to="/">
             Consulta de Hándicap
           </Typography>
-          {children}
+          <PlayerChooser />
         </Box>
       </Toolbar>
     </AppBarMui>

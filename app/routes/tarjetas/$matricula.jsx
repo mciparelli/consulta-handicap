@@ -1,4 +1,5 @@
-import { json, useLoaderData, useParams } from "remix";
+import { json } from '@remix-run/node';
+import { useLoaderData, useParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import React, { useMemo, useState } from "react";
 import {

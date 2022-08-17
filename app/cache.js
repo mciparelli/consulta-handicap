@@ -1,9 +1,12 @@
 import { createClient } from "redis";
-const client = createClient({
-  url:
-    `redis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-});
-client.connect();
+
+if (!global.client) {
+  global.client = createClient({
+       url:
+      `redis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+  }); 
+  global.client.connect();
+}
 
 const json = {
   get: async (key) => {
@@ -14,4 +17,4 @@ const json = {
   setex: (key, expSeconds, value) =>
     client.setEx(key, expSeconds, JSON.stringify(value)),
 };
-export default { json, db: client };
+export default { json, db: global.client };

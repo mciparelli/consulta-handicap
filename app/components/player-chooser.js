@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Autocomplete,
   Box,
@@ -8,29 +8,24 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { useDebouncedCallback } from "use-debounce";
-import { Form, Link, useSearchParams } from "remix";
+import { Form, Link, useLoaderData, useTransition, useSubmit, useNavigate } from "@remix-run/react";
 
-export default function PlayerChooser({ loading, players }) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const searchString = searchParams.get("searchString");
-  const [inputValue, setInputValue] = useState(searchString ?? "");
-  const theme = useTheme();
-  const [open, setOpen] = useState(false);
-  const onInputChange = useDebouncedCallback((ev) => {
-    setSearchParams({ searchString: ev.target.value }, { replace: true });
+export default function PlayerChooser() {
+  const navigate = useNavigate();
+  const submit = useSubmit();
+  const players = useLoaderData();
+  const transition = useTransition();
+  const loading = transition.state === "submitting";
+
+  const onChange = useDebouncedCallback((ev) => {
+    if (ev.target.value.length < 3) return
+    submit(ev.target.form)
   }, 250);
-
-  let options = [];
-
-  if (players && !loading) {
-    options = players;
-  }
 
   return (
     <Box sx={{ width: { xs: "100%", sm: 450 } }} clone>
-      <Form onChange={onInputChange}>
+      <Form method="get" action="?" onChange={onChange}>
         <Autocomplete
           sx={{
             "& .MuiAutocomplete-inputRoot": { backgroundColor: "common.white" },
@@ -40,15 +35,15 @@ export default function PlayerChooser({ loading, players }) {
             ? "No se encontraron jugadores"
             : "Ingrese matrícula o apellido"}
           loadingText="Buscando jugadores..."
-          open={open}
-          onOpen={() => {
-            setOpen(true);
-          }}
           openText="Ver jugadores"
           popupIcon={null}
-          onClose={() => setOpen(false)}
           getOptionLabel={({ fullName }) => fullName}
           filterOptions={(options) => options}
+          onChange={(ev, player) => {
+            if (player) {
+              navigate(`/tarjetas/${player.matricula}`)
+            }
+          }}
           renderOption={(
             props,
             { matricula, fullName, club, handicapIndex },
@@ -68,10 +63,6 @@ export default function PlayerChooser({ loading, players }) {
                   prefetch="intent"
                   reloadDocument
                   to={`/tarjetas/${matricula}`}
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    setOpen(false);
-                  }}
                 >
                   <Typography noWrap>
                     {fullName} ({handicapIndex})
@@ -80,16 +71,21 @@ export default function PlayerChooser({ loading, players }) {
               </Tooltip>
             );
           }}
-          options={options}
+          options={players ?? []}
           loading={loading}
           clearOnBlur={false}
-          inputValue={inputValue}
-          onInputChange={(_ev, newValue) => setInputValue(newValue)}
           renderInput={(params) => (
             <TextField
               {...params}
+              name="searchString"
               placeholder="Matrícula o apellido"
               variant="outlined"
+              inputProps={{
+                ...params.inputProps,
+                pattern: ".{3,}",
+                required: true,
+                title:"Dos o más caracteres"
+              }}
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (

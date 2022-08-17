@@ -10,6 +10,7 @@ async function savePlayersFound(players) {
 }
 
 async function findPlayersFromVista(searchString) {
+  if (searchString.length < 3) return [];
   const cacheKey = `hcp:search:${searchString}`;
   const cacheValue = await cache.json.get(cacheKey);
   if (cacheValue) return cacheValue;
@@ -19,7 +20,8 @@ async function findPlayersFromVista(searchString) {
   const paramKey = isOnlyNumbers ? "TxtNroMatricula" : "TxtApellido";
   params.append(paramKey, searchString);
   const response = await fetch(url, { method: "POST", body: params });
-  const result = await response.textConverted();
+  const buffer = await response.arrayBuffer();
+  const result = new TextDecoder('ISO-8859-1').decode(buffer);
   const $ = cheerio.load(result);
   const players = $("#table19 tr")
     .slice(2)
