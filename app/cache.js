@@ -10,11 +10,11 @@ if (!global.client) {
 
 const json = {
   get: async (key) => {
-    const unparsedValue = await client.get(key);
+    const unparsedValue = await global.client.get(key);
     return JSON.parse(unparsedValue);
   },
-  set: (key, value) => client.set(key, JSON.stringify(value)),
+  set: (key, value) => global.client.set(key, JSON.stringify(value)),
   setex: (key, expSeconds, value) =>
-    client.setEx(key, expSeconds, JSON.stringify(value)),
+    global.client.setEx(key, expSeconds, JSON.stringify(value)),
 };
 export default { json, db: global.client };
