@@ -59,15 +59,9 @@ export default function PlayerChooser() {
                 }
                 {...props}
               >
-                <Link
-                  prefetch="intent"
-                  reloadDocument
-                  to={`/tarjetas/${matricula}`}
-                >
-                  <Typography noWrap>
-                    {fullName} ({handicapIndex})
-                  </Typography>
-                </Link>
+                <Typography noWrap>
+                  {fullName} ({handicapIndex})
+                </Typography>
               </Tooltip>
             );
           }}
