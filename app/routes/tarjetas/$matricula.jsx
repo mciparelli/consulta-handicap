@@ -1,4 +1,4 @@
-import { json } from '@remix-run/node';
+import { json } from "@remix-run/node";
 import { useLoaderData, useParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import React, { useMemo, useState } from "react";
@@ -18,24 +18,40 @@ import {
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import { useTheme } from "@mui/material/styles";
-import { findPlayersFromVista, getHistorico, getTarjetas } from "~/api";
-import { hexToRGB } from "~/utils";
+import { getHistorico, getPlayer, getTarjetas } from "~/api";
+import { date, hexToRGB } from "~/utils";
 import Chart from "~/components/chart";
 
-export async function loader({ params: { matricula } }) {
-  invariant(matricula, "expected matricula");
+export async function loader({ params: { matricula: matriculaAsString } }) {
+  invariant(matriculaAsString, "expected matricula");
+  const matricula = Number(matriculaAsString);
   const tarjetas = await getTarjetas(matricula);
   const historico = await getHistorico(matricula);
-  const [{ fullName, club, handicapIndex }] = await findPlayersFromVista(
+  const chartData = historico.map(({ handicapIndex, date }) => ({
+    x: new Date(date).getTime(),
+    y: handicapIndex,
+  }));
+  const player = await getPlayer(
     matricula,
   );
-  return json({ tarjetas, fullName, club, handicapIndex, historico });
+  if (!player) {
+    throw new Response("Not Found", {
+      status: 404,
+    });
+  }
+  const { fullName, clubName, handicapIndex } = player;
+  return json({ tarjetas, fullName, clubName, handicapIndex, chartData }, {
+    headers: {
+      "Cache-Control":
+        `max-age=0, s-maxage=0, stale-while-revalidate=${date.secondsToNextThursday()}`,
+    },
+  });
 }
 
 export default function Tarjetas() {
   const hideMobileStyles = { display: { sm: "none", md: "table-cell" } };
   const { matricula } = useParams();
-  const { tarjetas, fullName, club, handicapIndex, historico } =
+  const { tarjetas, fullName, clubName, handicapIndex, chartData } =
     useLoaderData();
   const theme = useTheme();
   const [orderBy, setOrderBy] = useState("fecha");
@@ -51,7 +67,7 @@ export default function Tarjetas() {
         let value;
         switch (orderBy) {
           case "fecha": {
-            value = new Date(a.isoDate) - new Date(b.isoDate);
+            value = new Date(a.date) - new Date(b.date);
             break;
           }
           case "club": {
@@ -93,7 +109,7 @@ export default function Tarjetas() {
           component="span"
           sx={{ mr: 1, display: { xs: "none", sm: "flex" } }}
         >
-          {fullName} ({club}).{" "}
+          {fullName} ({clubName}).{" "}
         </Box>
         Matrícula {matricula}.{" "}
         <Box sx={{ ml: "auto", textAlign: "right" }} component="span">
@@ -208,6 +224,7 @@ export default function Tarjetas() {
           </TableHead>
           <TableBody>
             {sortedTarjetas.map((tarjeta) => {
+              const date = new Date(tarjeta.date);
               let backgroundColor;
               if (!tarjeta.processed) {
                 backgroundColor = hexToRGB(theme.palette.warning.light, 0.2);
@@ -221,8 +238,11 @@ export default function Tarjetas() {
                   }}
                   key={tarjeta.id}
                 >
-                  <TableCell align="left">{tarjeta.formattedDate}</TableCell>
-                  <TableCell align="left">{tarjeta.clubName.trim()}</TableCell>
+                  <TableCell align="left">
+                    `{date.getDate()}/{date.getMonth() +
+                      1}/{date.getFullYear()}
+                  </TableCell>
+                  <TableCell align="left">{tarjeta.clubName}</TableCell>
                   <TableCell align="center">
                     {tarjeta.score}
                     {tarjeta.adjustedScore !== tarjeta.score &&
@@ -246,7 +266,7 @@ export default function Tarjetas() {
         </Table>
       </TableContainer>
       <Chart
-        data={historico.map(({ handicapIndex: y, dateMs: x }) => ({ x, y }))}
+        data={chartData}
       />
     </Box>
   );
@@ -257,6 +277,17 @@ export function ErrorBoundary({ error }) {
     <Box sx={{ m: "auto", p: 2, textAlign: "center" }}>
       <Typography variant="h4">
         Hubo un error al buscar las tarjetas de este jugador. Intente más tarde.
+      </Typography>
+    </Box>
+  );
+}
+
+export function CatchBoundary() {
+  const { matricula } = useParams();
+  return (
+    <Box sx={{ m: "auto", p: 2, textAlign: "center" }}>
+      <Typography variant="h4">
+        No se encontró ningún jugador con la matrícula {matricula}
       </Typography>
     </Box>
   );

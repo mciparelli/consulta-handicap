@@ -1,5 +1,5 @@
 function hexToRGB(hex, alpha) {
-  var r = parseInt(hex.slice(1, 3), 16),
+  const r = parseInt(hex.slice(1, 3), 16),
     g = parseInt(hex.slice(3, 5), 16),
     b = parseInt(hex.slice(5, 7), 16);
 
@@ -10,12 +10,21 @@ function hexToRGB(hex, alpha) {
   }
 }
 
-function daysToSeconds(days) {
-  return 60 * 60 * 24 * days;
-}
+const date = {
+  getLastThurs() {
+    const lastThurs = new Date();
+    while (lastThurs.getDay() !== 4) {
+      lastThurs.setDate(lastThurs.getDate() - 1);
+    }
+    lastThurs.setHours(0, 0, 0, 0);
+    return lastThurs;
+  },
+  secondsToNextThursday() {
+    const now = new Date();
+    const nextThurs = date.getLastThurs();
+    nextThurs.setDate(nextThurs.getDate() + 7);
+    return Math.floor((nextThurs - now) / 1000);
+  },
+};
 
-function yearsToSeconds(years) {
-  return daysToSeconds(years * 365);
-}
-
-export { daysToSeconds, hexToRGB, yearsToSeconds };
+export { date, hexToRGB };

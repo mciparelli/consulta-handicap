@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model tarjetas {
+  date          DateTime  @db.Date
+  clubId        String
+  clubName      String
+  diferencial   Float     @db.Real
+  score         Int       @db.SmallInt
+  PCC           Int       @db.SmallInt
+  adjustedScore Int       @db.SmallInt
+  courseRating  Float     @db.Real
+  slopeRating   Float     @db.Real
+  is9Holes      Boolean
+  processed     Boolean
+  matricula     Int
+  jugadores     jugadores @relation(fields: [matricula], references: [matricula], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([date, clubId, matricula])
+}
+
+model handicap {
+  date          DateTime  @db.Date
+  handicapIndex Float     @db.Real
+  matricula     Int
+  jugadores     jugadores @relation(fields: [matricula], references: [matricula], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([date, handicapIndex, matricula])
+}
+
+model jugadores {
+  matricula Int        @id @unique
+  fullName  String
+  clubName  String
+  handicap  handicap[]
+  tarjetas  tarjetas[]
+}

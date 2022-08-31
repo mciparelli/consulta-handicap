@@ -9,18 +9,27 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useDebouncedCallback } from "use-debounce";
-import { Form, Link, useLoaderData, useTransition, useSubmit, useNavigate } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+  useSubmit,
+  useTransition,
+} from "@remix-run/react";
 
 export default function PlayerChooser() {
   const navigate = useNavigate();
   const submit = useSubmit();
   const players = useLoaderData();
+  const [searchParams] = useSearchParams();
   const transition = useTransition();
   const loading = transition.state === "submitting";
 
   const onChange = useDebouncedCallback((ev) => {
-    if (ev.target.value.length < 3) return
-    submit(ev.target.form)
+    if (ev.target.value.length < 3) return;
+    submit(ev.target.form);
   }, 250);
 
   return (
@@ -41,12 +50,12 @@ export default function PlayerChooser() {
           filterOptions={(options) => options}
           onChange={(ev, player) => {
             if (player) {
-              navigate(`/tarjetas/${player.matricula}`)
+              navigate(`/tarjetas/${player.matricula}`);
             }
           }}
           renderOption={(
             props,
-            { matricula, fullName, club, handicapIndex },
+            { matricula, fullName, clubName, handicapIndex },
           ) => {
             return (
               <Tooltip
@@ -54,7 +63,7 @@ export default function PlayerChooser() {
                 title={
                   <Typography component="div">
                     <div>Hándicap: {handicapIndex}</div>
-                    <div>Club: {club}</div>
+                    <div>Club: {clubName}</div>
                   </Typography>
                 }
                 {...props}
@@ -78,7 +87,7 @@ export default function PlayerChooser() {
                 ...params.inputProps,
                 pattern: ".{3,}",
                 required: true,
-                title:"Dos o más caracteres"
+                title: "Dos o más caracteres",
               }}
               InputProps={{
                 ...params.InputProps,

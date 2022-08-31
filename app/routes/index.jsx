@@ -1,13 +1,4 @@
 import { Box, Typography } from "@mui/material";
-import { yearsToSeconds } from "~/utils";
-
-export function headers() {
-  return {
-    "Cache-Control": `max-age=${yearsToSeconds(1)}, s-maxage=${
-      yearsToSeconds(1)
-    }`,
-  };
-}
 
 export default function App() {
   return (

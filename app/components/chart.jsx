@@ -2,7 +2,8 @@ import { ResponsiveLine } from "@nivo/line";
 import { Box } from "@mui/material";
 
 export default function Chart({ data }) {
-    const handicaps = data.map(v => v.y);
+  if (data.length < 2) return null;
+  const handicaps = data.map((v) => v.y);
   return (
     <Box height={400} my={4} bgcolor="white" borderRadius={2}>
       <ResponsiveLine
@@ -15,8 +16,8 @@ export default function Chart({ data }) {
         xFormat="time:%Q"
         yScale={{
           type: "linear",
-          min: handicaps.reduce((acc,v) => Math.min(acc, v)) - 0.2,
-          max: handicaps.reduce((acc,v) => Math.max(acc, v)) + 0.2
+          min: handicaps.reduce((acc, v) => Math.min(acc, v)) - 0.2,
+          max: handicaps.reduce((acc, v) => Math.max(acc, v)) + 0.2,
         }}
         theme={{
           axis: { legend: { text: { fontSize: 16, fontWeight: 600 } } },
@@ -32,7 +33,7 @@ export default function Chart({ data }) {
         axisBottom={{
           format: "%d-%m",
           tickValues: "every 7 days",
-          tickPadding: 12
+          tickPadding: 12,
         }}
         layers={["grid", "axes", "points", "lines"]}
         pointSize={16}
