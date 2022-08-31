@@ -1,4 +1,11 @@
 import { Box, Typography } from "@mui/material";
+import { date } from "~/utils";
+
+export function headers() {
+  return {
+    "Cache-Control": `max-age=0, s-maxage=${date.secondsToNextThursday()}`,
+  };
+}
 
 export default function App() {
   return (

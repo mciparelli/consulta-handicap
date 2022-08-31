@@ -40,12 +40,14 @@ export async function loader({ params: { matricula: matriculaAsString } }) {
     });
   }
   const { fullName, clubName, handicapIndex } = player;
-  return json({ tarjetas, fullName, clubName, handicapIndex, chartData }, {
-    headers: {
-      "Cache-Control":
-        `max-age=0, s-maxage=0, stale-while-revalidate=${date.secondsToNextThursday()}`,
-    },
-  });
+  return json({ tarjetas, fullName, clubName, handicapIndex, chartData });
+}
+
+export function headers() {
+  return {
+    "Cache-Control":
+      `max-age=0, s-maxage=0, stale-while-revalidate=${date.secondsToNextThursday()}`,
+  };
 }
 
 export default function Tarjetas() {
