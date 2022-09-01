@@ -16,7 +16,7 @@ const date = {
     while (lastThurs.getDay() !== 4) {
       lastThurs.setDate(lastThurs.getDate() - 1);
     }
-    lastThurs.setHours(0, 0, 0, 0);
+    lastThurs.setHours(10, 0, 0);
     return lastThurs;
   },
   secondsToNextThursday() {
