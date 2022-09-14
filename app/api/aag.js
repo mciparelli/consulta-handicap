@@ -19,7 +19,7 @@ async function getTarjetas(matricula) {
       id,
       date,
       clubId,
-      clubName,
+      clubName: clubName.toLowerCase().trim(),
       diferencial,
       score: tarjeta.Score,
       PCC,

@@ -1,31 +1,73 @@
 import { json } from "@remix-run/node";
-import { useLoaderData, useParams } from "@remix-run/react";
-import invariant from "tiny-invariant";
-import React, { useMemo, useState } from "react";
 import {
-  Box,
-  Hidden,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableSortLabel,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
-import { useTheme } from "@mui/material/styles";
+  Form,
+  Link,
+  useLoaderData,
+  useParams,
+  useSearchParams,
+  useSubmit,
+  useTransition,
+} from "@remix-run/react";
+import React, { Fragment, useRef, useState } from "react";
+import {
+  ArrowSmallDownIcon,
+  ArrowSmallUpIcon,
+  InformationCircleIcon,
+} from "@heroicons/react/24/outline";
+import { EyeIcon } from "@heroicons/react/24/solid";
+import { Transition } from "@headlessui/react";
 import { getHistorico, getPlayer, getTarjetas } from "~/api";
 import { date, hexToRGB } from "~/utils";
 import Chart from "~/components/chart";
 
-export async function loader({ params: { matricula: matriculaAsString } }) {
-  invariant(matriculaAsString, "expected matricula");
+const iconColor = "text-gray-500";
+
+function TableHeader({ children, className = "", title, onClick, direction }) {
+  const iconClass = `absolute mx-1 w-4 left-full ${iconColor}`;
+  return (
+    <th className="px-3 py-4 border-b border-slate-300 table-cell">
+      <button
+        onClick={onClick}
+        className={`relative flex mr-auto text-sm font-semibold items-center group ${
+          direction === undefined ? `hover:opacity-60` : ""
+        } ${className}`}
+        title={title}
+      >
+        {children}
+        {direction === "desc" && <ArrowSmallDownIcon className={iconClass} />}
+        {direction !== "desc" && (
+          <ArrowSmallUpIcon
+            className={`${iconClass} ${
+              direction === undefined
+                ? "transition-opacity opacity-0 group-hover:opacity-100"
+                : ""
+            }`}
+          />
+        )}
+      </button>
+    </th>
+  );
+}
+
+function TableCell({ children, className = "", ...props }) {
+  return (
+    <td
+      className={`border-b border-slate-300 px-3 py-4 text-sm ${className}`}
+      {...props}
+    >
+      {children}
+    </td>
+  );
+}
+
+export async function loader(
+  { request, params: { matricula: matriculaAsString } },
+) {
+  if (!matriculaAsString) throw new Error("Expected matricula");
+  const url = new URL(request.url);
+  const todas = url.searchParams.get("todas");
   const matricula = Number(matriculaAsString);
-  const tarjetas = await getTarjetas(matricula);
+  const tarjetas = await getTarjetas(matricula, todas);
   const historico = await getHistorico(matricula);
   const chartData = historico.map(({ handicapIndex, date }) => ({
     x: new Date(date).getTime(),
@@ -52,250 +94,232 @@ export function headers() {
 
 export default function Tarjetas() {
   const hideMobileStyles = { display: { sm: "none", md: "table-cell" } };
+  const chartRef = useRef();
+  const submit = useSubmit();
+  const transition = useTransition();
   const { matricula } = useParams();
+  const [searchParams] = useSearchParams();
+  const viendoHistoricas = Boolean(searchParams.get("todas"));
   const { tarjetas, fullName, clubName, handicapIndex, chartData } =
     useLoaderData();
-  const theme = useTheme();
   const [orderBy, setOrderBy] = useState("fecha");
   const [ascSort, setAscSort] = useState(false);
   const sortDirection = ascSort ? "asc" : "desc";
-  const sortBy = (newOrderBy) => {
-    setOrderBy(newOrderBy);
-    setAscSort(newOrderBy === orderBy ? !ascSort : true);
+  const bg = {
+    best: "bg-green-600",
+    next: "bg-orange-300",
   };
-  const sortedTarjetas = useMemo(
-    () =>
-      tarjetas.sort((a, b) => {
-        let value;
-        switch (orderBy) {
-          case "fecha": {
-            value = new Date(a.date) - new Date(b.date);
-            break;
-          }
-          case "club": {
-            value = a.clubName.localeCompare(b.clubName);
-            break;
-          }
-          case "calificacion": {
-            value = a.courseRating - b.courseRating;
-            break;
-          }
-          case "slope": {
-            value = a.slopeRating - b.slopeRating;
-            break;
-          }
-          case "score-adj": {
-            value = a.adjustedScore - b.adjustedScore;
-            break;
-          }
-          case "dif": {
-            value = a.diferencial - b.diferencial;
-            break;
-          }
-        }
-        return ascSort ? value : value * -1;
-      }),
-    [tarjetas, orderBy, ascSort],
-  );
+  const sortBy = (newOrderBy) => {
+    setAscSort(newOrderBy === orderBy ? !ascSort : true);
+    setOrderBy(newOrderBy);
+  };
+  const sortedTarjetas = tarjetas.sort((a, b) => {
+    let value;
+    switch (orderBy) {
+      case "fecha": {
+        value = new Date(a.date) - new Date(b.date);
+        break;
+      }
+      case "club": {
+        value = a.clubName.localeCompare(b.clubName);
+        break;
+      }
+      case "calificacion": {
+        value = a.courseRating - b.courseRating;
+        break;
+      }
+      case "slope": {
+        value = a.slopeRating - b.slopeRating;
+        break;
+      }
+      case "score-adj": {
+        value = a.adjustedScore - b.adjustedScore;
+        break;
+      }
+      case "dif": {
+        value = a.diferencial - b.diferencial;
+        break;
+      }
+    }
+    return ascSort ? value : value * -1;
+  });
+  const mostrandoHistoricas = sortedTarjetas.length > 20;
   if (sortedTarjetas.length === 0) {
     return (
-      <Box m="auto">
-        <Typography>No se encontraron tarjetas para este jugador</Typography>
-      </Box>
+      <div className="m-auto text-2xl text-center">
+        No se encontraron tarjetas para {fullName}
+      </div>
     );
   }
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h5" component="p" sx={{ py: 2, display: "flex" }}>
-        <Box
-          component="span"
-          sx={{ mr: 1, display: { xs: "none", sm: "flex" } }}
-        >
-          {fullName} ({clubName}).{" "}
-        </Box>
-        Matrícula {matricula}.{" "}
-        <Box sx={{ ml: "auto", textAlign: "right" }} component="span">
+    <Form
+      className="p-5"
+      method="get"
+      action="?"
+      onChange={(event) => submit(event.currentTarget)}
+    >
+      <div className="flex text-xl py-3">
+        <span className="hidden lg:inline-flex capitalize">
+          {fullName} ({clubName}).
+        </span>
+        <span className="lg:ml-1">Matrícula {matricula}.</span>
+        <span className="ml-auto text-right">
           Hándicap Index: {handicapIndex}
-          {
-            /*nextHandicapIndex && (
-              <Box>
-                Hándicap Index proyectado:{' '}
-                <Tooltip title="Puede cambiar si ingresan nuevas tarjetas antes del jueves próximo">
-                  <span>{nextHandicapIndex}</span>
-                </Tooltip>
-              </Box>
-            )*/
-          }
-        </Box>
-      </Typography>
-      <Box sx={{ display: "flex", py: 2 }}>
-        <Box
-          sx={{
-            mr: 1,
-            borderRadius: 1,
-            width: 40,
-            height: 20,
-            bgcolor: theme.palette.success.light,
-          }}
+        </span>
+      </div>
+      <div className="flex py-4 items-center">
+        <div
+          className={`mr-2 rounded-sm w-8 h-4 ${bg.best}`}
         >
-        </Box>
-        <Typography>Ocho mejores</Typography>
-        <Box
-          sx={{
-            ml: 2,
-            mr: 1,
-            borderRadius: 1,
-            width: 40,
-            height: 20,
-            bgcolor: hexToRGB(theme.palette.warning.light, 0.2),
-          }}
+        </div>
+        <span>Ocho mejores</span>
+        <div
+          className={`ml-6 mr-2 rounded-sm w-8 h-4 ${bg.next}`}
         >
-        </Box>
-        <Typography>Ingresan el próximo jueves</Typography>
-      </Box>
-      <TableContainer sx={{ flexGrow: 1 }} component={Paper}>
-        <Table stickyHeader aria-label="tarjetas del jugador">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">
-                <TableSortLabel
-                  active={orderBy === "fecha"}
-                  direction={orderBy === "fecha" ? sortDirection : undefined}
-                  onClick={(_ev) => sortBy("fecha")}
-                >
-                  Fecha
-                </TableSortLabel>
-              </TableCell>
-              <TableCell align="left">
-                <TableSortLabel
-                  active={orderBy === "club"}
-                  direction={orderBy === "club" ? sortDirection : undefined}
-                  onClick={(_ev) => sortBy("club")}
-                >
-                  Club
-                </TableSortLabel>
-              </TableCell>
-              <TableCell align="center">
-                <TableSortLabel
-                  active={orderBy === "score-adj"}
-                  direction={orderBy === "score-adj"
-                    ? sortDirection
-                    : undefined}
-                  onClick={(_ev) => sortBy("score-adj")}
-                >
-                  Score (ajustado)
-                </TableSortLabel>
-              </TableCell>
-              <TableCell align="center" sx={hideMobileStyles}>
-                <TableSortLabel
-                  active={orderBy === "calificacion"}
-                  direction={orderBy === "calificacion"
-                    ? sortDirection
-                    : undefined}
-                  onClick={(_ev) => sortBy("calificacion")}
-                >
-                  Calificación
-                </TableSortLabel>
-              </TableCell>
-              <TableCell align="center" sx={hideMobileStyles}>
-                <TableSortLabel
-                  active={orderBy === "slope"}
-                  direction={orderBy === "slope" ? sortDirection : undefined}
-                  onClick={(_ev) => sortBy("slope")}
-                >
-                  Slope
-                </TableSortLabel>
-              </TableCell>
-              <TableCell align="center">
-                <Tooltip title="(113 / Slope) x (Score Ajustado – Calificación - PCC)">
-                  <TableSortLabel
-                    active={orderBy === "dif"}
-                    direction={orderBy === "dif" ? sortDirection : undefined}
-                    onClick={(_ev) => sortBy("dif")}
-                  >
-                    Diferencial Ajustado
-                    <Box ml={1}>
-                      <Typography color="textSecondary">
-                        <InfoIcon />
-                      </Typography>
-                    </Box>
-                  </TableSortLabel>
-                </Tooltip>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sortedTarjetas.map((tarjeta) => {
+        </div>
+        <span>Ingresan el próximo jueves</span>
+        <label className="flex ml-auto text-sm">
+          <input
+            type="checkbox"
+            name="todas"
+            defaultChecked={viendoHistoricas}
+            className="w-4 mr-2"
+            onClick={(_e) => {
+              if (!viendoHistoricas) {
+                chartRef.current.scrollIntoView({
+                  behavior: "smooth",
+                  block: "end",
+                });
+              }
+            }}
+          />
+          Ver históricas
+        </label>
+      </div>
+      <div className="w-full overflow-x-auto">
+        <table
+          aria-label="tarjetas del jugador"
+          className="my-1 bg-white rounded-md shadow-sm w-full"
+        >
+          <thead>
+            <tr>
+              <TableHeader
+                direction={orderBy === "fecha" ? sortDirection : undefined}
+                onClick={(_ev) => sortBy("fecha")}
+              >
+                Fecha
+              </TableHeader>
+              <TableHeader
+                direction={orderBy === "club" ? sortDirection : undefined}
+                onClick={(_ev) => sortBy("club")}
+              >
+                Club
+              </TableHeader>
+              <TableHeader
+                direction={orderBy === "score-adj" ? sortDirection : undefined}
+                onClick={(_ev) => sortBy("score-adj")}
+                className="mx-auto hi"
+              >
+                Score (ajustado)
+              </TableHeader>
+              <TableHeader
+                direction={orderBy === "calificacion"
+                  ? sortDirection
+                  : undefined}
+                onClick={(_ev) => sortBy("calificacion")}
+                className="mx-auto"
+              >
+                Calificación
+              </TableHeader>
+              <TableHeader
+                direction={orderBy === "slope" ? sortDirection : undefined}
+                onClick={(_ev) => sortBy("slope")}
+                className="mx-auto"
+              >
+                Slope
+              </TableHeader>
+              <TableHeader
+                direction={orderBy === "dif" ? sortDirection : undefined}
+                onClick={(_ev) => sortBy("dif")}
+                className="mx-auto"
+                title="(113 / Slope) x (Score Ajustado – Calificación - PCC)"
+              >
+                Diferencial Ajustado
+                <InformationCircleIcon
+                  className={`ml-1 w-5 hidden lg:block ${iconColor}`}
+                />
+              </TableHeader>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedTarjetas.map((tarjeta, index) => {
               const date = new Date(tarjeta.date);
-              let backgroundColor;
+              let bgColor = "";
               if (!tarjeta.processed) {
-                backgroundColor = hexToRGB(theme.palette.warning.light, 0.2);
+                bgColor = bg.next;
               } else if (tarjeta.selected) {
-                backgroundColor = theme.palette.success.light;
+                bgColor = bg.best;
               }
               return (
-                <TableRow
-                  sx={{
-                    backgroundColor,
-                  }}
+                <tr
+                  id={tarjeta.historica
+                    ? "historica-" + String(index - 20)
+                    : undefined}
+                  className={`${bgColor} ${
+                    tarjeta.historica ? "opacity-50" : ""
+                  }`}
                   key={tarjeta.id}
                 >
-                  <TableCell align="left">
-                    `{date.getDate()}/{date.getMonth() +
+                  <TableCell>
+                    {date.getDate()}/{date.getMonth() +
                       1}/{date.getFullYear()}
                   </TableCell>
-                  <TableCell align="left">{tarjeta.clubName}</TableCell>
-                  <TableCell align="center">
+                  <TableCell className="capitalize">
+                    {tarjeta.clubName}
+                  </TableCell>
+                  <TableCell className="text-center">
                     {tarjeta.score}
                     {tarjeta.adjustedScore !== tarjeta.score &&
                       ` (${tarjeta.adjustedScore})`}
                     {tarjeta.PCC > 0 ? ` PCC ${tarjeta.PCC}` : ""}
                   </TableCell>
-                  <TableCell sx={hideMobileStyles} align="center">
+                  <TableCell className="text-center">
                     {tarjeta.courseRating}
                   </TableCell>
-                  <TableCell sx={hideMobileStyles} align="center">
+                  <TableCell className="text-center">
                     {tarjeta.slopeRating}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell className="text-center">
                     {tarjeta.diferencial.toFixed(1)}
                     {tarjeta.is9Holes ? "*" : undefined}
                   </TableCell>
-                </TableRow>
+                </tr>
               );
             })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </tbody>
+        </table>
+      </div>
       <Chart
+        ref={chartRef}
         data={chartData}
       />
-    </Box>
+    </Form>
   );
 }
 
 export function ErrorBoundary({ error }) {
   return (
-    <Box sx={{ m: "auto", p: 2, textAlign: "center" }}>
-      <Typography variant="h4">
-        Hubo un error al buscar las tarjetas de este jugador. Intente más tarde.
-      </Typography>
-    </Box>
+    <div className="m-auto text-2xl text-center">
+      Hubo un error al buscar las tarjetas de este jugador. Intente más tarde.
+    </div>
   );
 }
 
 export function CatchBoundary() {
   const { matricula } = useParams();
   return (
-    <Box sx={{ m: "auto", p: 2, textAlign: "center" }}>
-      <Typography variant="h4">
-        No se encontró ningún jugador con la matrícula {matricula}
-      </Typography>
-    </Box>
+    <div className="m-auto text-2xl text-center">
+      No se encontró ningún jugador con la matrícula {matricula}
+    </div>
   );
-}
-
-export function unstable_shouldReload() {
-  // only reload on full page change
-  return false;
 }

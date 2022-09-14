@@ -1,11 +1,7 @@
 import { Links, LiveReload, Meta, Outlet, Scripts } from "@remix-run/react";
-import { json } from "@remix-run/node";
-import AppBar from "~/components/appbar";
-import Theme from "~/components/theme";
-import { findPlayers } from "~/api";
-import { date } from "~/utils";
+import PlayerChooser from "./components/player-chooser";
 
-import globalStylesUrl from "~/styles/global.css";
+import tailwindCss from "./styles/app.css";
 
 export function meta() {
   return {
@@ -17,33 +13,13 @@ export function meta() {
 }
 
 export function links() {
-  return [{ rel: "stylesheet", href: globalStylesUrl }];
+  return [{
+    rel: "stylesheet",
+    href: tailwindCss,
+  }];
 }
 
-export async function loader({ request }) {
-  const url = new URL(request.url);
-  const query = url.searchParams.get("searchString");
-  if (!query) return null;
-  const players = await findPlayers(query);
-  return json(players, {
-    headers: {
-      "Cache-Control": `max-age=0, s-maxage=${date.secondsToNextThursday()}`,
-    },
-  });
-}
-
-export default function App() {
-  return (
-    <Document>
-      <div id="app-container">
-        <AppBar />
-        <Outlet />
-      </div>
-    </Document>
-  );
-}
-
-function Document({ children, title }) {
+function Document({ children }) {
   return (
     <html lang="en">
       <head>
@@ -51,12 +27,24 @@ function Document({ children, title }) {
         <Links />
       </head>
       <body>
-        <Theme>
-          {children}
-        </Theme>
+        {children}
         <Scripts />
         <LiveReload />
       </body>
     </html>
+  );
+}
+
+export default function App() {
+  return (
+    <Document>
+      <nav className="bg-blue-500 px-3 sm:px-6 py-4 flex items-center justify-between flex-col md:flex-row">
+        <a href="/">
+          <h1 className="text-white text-2xl py-2">Consulta de hándicap</h1>
+        </a>
+        <PlayerChooser />
+      </nav>
+      <Outlet />
+    </Document>
   );
 }

@@ -3,7 +3,7 @@ import * as aag from "./aag";
 import * as db from "./db";
 
 async function findPlayers(searchString) {
-  if (searchString.length < 3) throw new Error("searchString too short.");
+  if (searchString?.length < 3) return null;
   const players = await vista.findPlayers(searchString);
   db.saveHistorico(players); // save but no need to wait on response
   return players;
@@ -35,7 +35,7 @@ function getSelectedIds(tarjetas) {
     .slice(0, 8);
 }
 
-async function getTarjetas(matricula) {
+async function getTarjetas(matricula, todas) {
   const allTarjetas = await aag.getTarjetas(matricula);
 
   const [processed, unprocessed] = [[], []];
@@ -50,12 +50,18 @@ async function getTarjetas(matricula) {
   // dont care about older ones
   const last20Tarjetas = processed.slice(0, 20);
   const selectedIds = getSelectedIds(last20Tarjetas);
-  return [...unprocessed, ...last20Tarjetas].map((tarjeta) => {
+  const toReturn = [...unprocessed, ...last20Tarjetas].map((tarjeta) => {
     return {
       ...tarjeta,
       selected: selectedIds.includes(tarjeta.id),
     };
   });
+  if (!todas) return toReturn;
+  const historicas = processed.slice(21).map((tarjeta) => ({
+    ...tarjeta,
+    historica: true,
+  }));
+  return [...toReturn, ...historicas];
 }
 
 const getHistorico = db.getHistorico;

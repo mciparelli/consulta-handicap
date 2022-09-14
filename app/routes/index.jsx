@@ -1,4 +1,3 @@
-import { Box, Typography } from "@mui/material";
 import { date } from "~/utils";
 
 export function headers() {
@@ -9,10 +8,8 @@ export function headers() {
 
 export default function App() {
   return (
-    <Box sx={{ m: "auto", p: 2, textAlign: "center" }}>
-      <Typography variant="h4">
-        Elija un jugador para consultar sus últimas 20 tarjetas.
-      </Typography>
-    </Box>
+    <div className="m-auto text-2xl text-center">
+      Elija un jugador para consultar sus últimas 20 tarjetas.
+    </div>
   );
 }

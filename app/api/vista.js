@@ -24,9 +24,9 @@ async function findPlayers(searchString) {
         .get();
       return {
         matricula: Number(matricula),
-        fullName: fullName.replace(/\s\s+/g, " "),
+        fullName: fullName.replace(/\s\s+/g, " ").toLowerCase().trim(),
         handicapIndex: Number(handicapIndex.replace(",", ".")),
-        clubName,
+        clubName: clubName.toLowerCase().trim(),
       };
     })
     .get();

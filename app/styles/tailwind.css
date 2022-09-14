@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
+
+body {
+  display:  flex;
+  flex-direction: column;
+  height: 100vh;
+  @apply bg-gray-100;
+}

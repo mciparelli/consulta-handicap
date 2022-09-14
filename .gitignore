@@ -7,3 +7,5 @@ node_modules
 public/build
 api
 .env
+.sublime-project
+app/styles/app.css
