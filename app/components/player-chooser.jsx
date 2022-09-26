@@ -18,7 +18,7 @@ export default function PlayerChooser() {
     <Combobox
       as="div"
       className="relative w-full md:w-auto"
-      onChange={(player) => navigate(`/tarjetas/${player.matricula}`)}
+      onChange={(player) => window.location.href = `/tarjetas/${player.matricula}`}
     >
       <fetcher.Form
         method="get"
