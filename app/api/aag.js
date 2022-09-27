@@ -5,7 +5,7 @@ async function getTarjetas(matricula) {
   const result = await response.json();
 
   return result.map((tarjeta) => {
-    const [clubId, clubName] = tarjeta.NombreClub.split(" - ").map((v) =>
+    const [clubId, clubName] = tarjeta.NombreClub.split(' - ').map((v) =>
       v.trim()
     );
     const slopeRating = tarjeta.SlopeRating;
@@ -30,7 +30,7 @@ async function getTarjetas(matricula) {
       adjustedScore,
       courseRating,
       slopeRating,
-      is9Holes: tarjeta.TipoTarjeta === "9",
+      is9Holes: tarjeta.TipoTarjeta === '9',
       processed: tarjeta.Procesado,
     };
   });

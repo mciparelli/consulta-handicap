@@ -4,9 +4,9 @@ function hexToRGB(hex, alpha) {
     b = parseInt(hex.slice(5, 7), 16);
 
   if (alpha) {
-    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
   } else {
-    return "rgb(" + r + ", " + g + ", " + b + ")";
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')';
   }
 }
 
@@ -26,7 +26,10 @@ const date = {
     return Math.floor((nextThurs - now) / 1000);
   },
   format(date) {
-    const formatter = new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long' });
+    const formatter = new Intl.DateTimeFormat('es-AR', {
+      day: 'numeric',
+      month: 'long',
+    });
     return formatter.format(date);
   },
 };

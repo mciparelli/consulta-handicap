@@ -1,6 +1,6 @@
-import * as vista from "./vista";
-import * as aag from "./aag";
-import * as db from "./db";
+import * as vista from './vista';
+import * as aag from './aag';
+import * as db from './db';
 
 async function findPlayers(searchString) {
   if (searchString?.length < 3) return null;

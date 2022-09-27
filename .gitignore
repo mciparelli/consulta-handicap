@@ -1,11 +1,15 @@
 node_modules
 
 .cache
-.vercel
 .output
 
+build
 public/build
 api
 .env
 .sublime-project
 app/styles/app.css
+
+yarn-error.log
+
+db.sqlite3

@@ -1,0 +1,22 @@
+{
+  "lint": {
+    "files": {
+      "include": ["app"],
+    },
+    "rules": {
+      "tags": ["recommended"],
+      "exclude": ["prefer-const"]
+    }
+  },
+  "fmt": {
+    "files": {
+      "include": ["app"],
+    },
+    "options": {
+      "useTabs": false,
+      "lineWidth": 80,
+      "indentWidth": 2,
+      "singleQuote": true
+    }
+  }
+}

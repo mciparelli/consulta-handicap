@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
-import { date } from "~/utils";
+import { PrismaClient } from '@prisma/client';
 
 let prisma;
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === 'production') {
   prisma = new PrismaClient();
 } else {
   if (!global.prisma) {
@@ -57,7 +56,7 @@ async function saveHistorico(players) {
   }
 }
 
-async function getHistorico(matricula) {
+function getHistorico(matricula) {
   const threeMonthsAgoDate = new Date();
   threeMonthsAgoDate.setMonth(threeMonthsAgoDate.getMonth() - 3);
   return prisma.handicap.findMany({
@@ -85,7 +84,7 @@ async function getPlayer(matricula) {
       handicap: {
         take: 1,
         orderBy: {
-          date: "desc",
+          date: 'desc',
         },
         select: {
           date: true,
