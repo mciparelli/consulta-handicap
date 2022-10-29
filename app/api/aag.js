@@ -14,6 +14,8 @@ async function getTarjetas(matricula) {
     const PCC = tarjeta.PCC;
     const diferencial = tarjeta.Diferencial;
     const date = new Date(tarjeta.FechaTorneo);
+    // set to almost midnight to avoid having the date changed depending on where we are
+    date.setHours(23);
     const id = `${clubId}-${date.getTime()}-${diferencial}`;
     return {
       id,
