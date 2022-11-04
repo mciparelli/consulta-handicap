@@ -36,8 +36,7 @@ async function saveHistorico(players) {
         handicap: {
           connectOrCreate: {
             where: {
-              date_handicapIndex_matricula: {
-                handicapIndex,
+              date_matricula: {
                 date: lastThursDate,
                 matricula,
               },
