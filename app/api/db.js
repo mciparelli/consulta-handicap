@@ -34,7 +34,7 @@ async function saveHistorico(players) {
         fullName,
         clubName,
         handicap: {
-          connectOrCreate: {
+          upsert: {
             where: {
               date_matricula: {
                 date: lastThursDate,
@@ -45,6 +45,9 @@ async function saveHistorico(players) {
               handicapIndex,
               date: lastThursDate,
             },
+            update: {
+              handicapIndex              
+            }
           },
         },
       },
