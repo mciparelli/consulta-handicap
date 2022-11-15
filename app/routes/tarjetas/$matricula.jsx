@@ -253,6 +253,7 @@ export default function Tarjetas() {
           </thead>
           <tbody>
             {sortedTarjetas.map((tarjeta, index) => {
+              const cargaDate = new Date(tarjeta.cargaDate);
               const date = new Date(tarjeta.date);
               let bgColor = "";
               if (!tarjeta.processed) {
@@ -270,7 +271,8 @@ export default function Tarjetas() {
                   }`}
                   key={tarjeta.id}
                 >
-                  <TableCell>
+                  <TableCell title={`Cargada ${cargaDate.getDate()}/${cargaDate.getMonth() +
+                      1}/${cargaDate.getFullYear()}`}>
                     {date.getDate()}/{date.getMonth() +
                       1}/{date.getFullYear()}
                   </TableCell>
