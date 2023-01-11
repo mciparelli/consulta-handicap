@@ -81,8 +81,20 @@ export async function loader(
       status: 404,
     });
   }
-  const { fullName, clubName, handicapIndex } = player;
-  return json({ tarjetas, fullName, clubName, handicapIndex, chartData });
+  const {
+    fullName,
+    clubName,
+    handicapIndex,
+    handicapDate: handicapDateString,
+  } = player;
+  return json({
+    tarjetas,
+    fullName,
+    clubName,
+    handicapIndex,
+    handicapDateString,
+    chartData,
+  });
 }
 
 export function headers() {
@@ -100,8 +112,14 @@ export default function Tarjetas() {
   const { matricula } = useParams();
   const [searchParams] = useSearchParams();
   const viendoHistoricas = Boolean(searchParams.get("todas"));
-  const { tarjetas, fullName, clubName, handicapIndex, chartData } =
-    useLoaderData();
+  const {
+    tarjetas,
+    fullName,
+    clubName,
+    handicapIndex,
+    handicapDateString,
+    chartData,
+  } = useLoaderData();
   const [orderBy, setOrderBy] = useState("fecha");
   const [ascSort, setAscSort] = useState(false);
   const sortDirection = ascSort ? "asc" : "desc";
@@ -151,6 +169,8 @@ export default function Tarjetas() {
       </div>
     );
   }
+  let untilDate = new Date(handicapDateString);
+  untilDate.setDate(untilDate.getDate() + 7);
   return (
     <Form
       className="p-5"
@@ -164,7 +184,7 @@ export default function Tarjetas() {
         </span>
         <span className="lg:ml-1">Matrícula {matricula}.</span>
         <span className="ml-auto text-right">
-          Hándicap Index: {handicapIndex}
+          Hándicap Index: {handicapIndex} (hasta el {date.format(untilDate)})
         </span>
       </div>
       <div className="flex py-4 items-center">
@@ -271,8 +291,12 @@ export default function Tarjetas() {
                   }`}
                   key={tarjeta.id}
                 >
-                  <TableCell title={`Cargada ${cargaDate.getDate()}/${cargaDate.getMonth() +
-                      1}/${cargaDate.getFullYear()}`}>
+                  <TableCell
+                    title={`Cargada ${cargaDate.getDate()}/${
+                      cargaDate.getMonth() +
+                      1
+                    }/${cargaDate.getFullYear()}`}
+                  >
                     {date.getDate()}/{date.getMonth() +
                       1}/{date.getFullYear()}
                   </TableCell>

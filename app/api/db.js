@@ -13,8 +13,10 @@ if (process.env.NODE_ENV === "production") {
 }
 
 async function saveHistorico(players) {
-  const lastThursDate = date.getLastThurs();
-  for (const { matricula, clubName, fullName, handicapIndex } of players) {
+  for (
+    const { matricula, clubName, fullName, handicapIndex, handicapDate }
+      of players
+  ) {
     await prisma.jugadores.upsert({
       where: {
         matricula,
@@ -26,7 +28,7 @@ async function saveHistorico(players) {
         handicap: {
           create: {
             handicapIndex,
-            date: lastThursDate,
+            date: handicapDate,
           },
         },
       },
@@ -37,17 +39,17 @@ async function saveHistorico(players) {
           upsert: {
             where: {
               date_matricula: {
-                date: lastThursDate,
+                date: handicapDate,
                 matricula,
               },
             },
             create: {
               handicapIndex,
-              date: lastThursDate,
+              date: handicapDate,
             },
             update: {
-              handicapIndex              
-            }
+              handicapIndex,
+            },
           },
         },
       },
@@ -81,10 +83,12 @@ async function getPlayer(matricula) {
       fullName: true,
       clubName: true,
       handicap: {
-        where: {
-          date: date.getLastThurs(),
+        take: 1,
+        orderBy: {
+          date: "desc",
         },
         select: {
+          date: true,
           handicapIndex: true,
         },
       },
@@ -96,8 +100,13 @@ async function getPlayer(matricula) {
   ) {
     return null;
   }
-  const { clubName, fullName, handicap: [{ handicapIndex }] } = player;
-  return { clubName, fullName, handicapIndex };
+  const {
+    clubName,
+    fullName,
+    handicap: [{ handicapIndex, date: handicapDate }],
+  } = player;
+  handicapDate.setHours(handicapDate.getHours() + 4);
+  return { clubName, fullName, handicapIndex, handicapDate };
 }
 
 export { getHistorico, getPlayer, saveHistorico };
