@@ -26,7 +26,8 @@ const date = {
     return Math.floor((nextThurs - now) / 1000);
   },
   format(date) {
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    const formatter = new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long' });
+    return formatter.format(date);
   },
 };
 
