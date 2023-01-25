@@ -334,6 +334,7 @@ export default function Tarjetas() {
 }
 
 export function ErrorBoundary({ error }) {
+  console.log(error);
   return (
     <div className='m-auto text-2xl text-center'>
       Hubo un error al buscar las tarjetas de este jugador. Intente más tarde.
