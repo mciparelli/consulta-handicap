@@ -68,7 +68,11 @@ const getHistorico = db.getHistorico;
 
 async function getPlayer(matricula) {
   let dbPlayer = await db.getPlayer(matricula);
-  if (dbPlayer) return dbPlayer;
+  const now = new Date();
+  const timeDiff = now.getTime() - dbPlayer?.handicapDate.getTime();
+  const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+  const timeToUpdate = daysDiff >= 7;
+  if (dbPlayer && !timeToUpdate) return dbPlayer;
   const [player] = await findPlayers(matricula);
   return player;
 }
