@@ -57,9 +57,9 @@ async function saveHistorico(players) {
   }
 }
 
-async function getHistorico(matricula) {
+async function getHistorico(matricula, months) {
   const threeMonthsAgoDate = new Date();
-  threeMonthsAgoDate.setMonth(threeMonthsAgoDate.getMonth() - 3);
+  threeMonthsAgoDate.setMonth(threeMonthsAgoDate.getMonth() - months);
   return prisma.handicap.findMany({
     where: {
       matricula,

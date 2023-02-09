@@ -60,15 +60,18 @@ function TableCell({ children, className = "", ...props }) {
   );
 }
 
+const months = [1, 3, 6];
+
 export async function loader(
   { request, params: { matricula: matriculaAsString } },
 ) {
   if (!matriculaAsString) throw new Error("Expected matricula");
   const url = new URL(request.url);
   const todas = url.searchParams.get("todas");
+  const monthsParam = url.searchParams.get("months") ?? months[0];
   const matricula = Number(matriculaAsString);
   const tarjetas = await getTarjetas(matricula, todas);
-  const historico = await getHistorico(matricula);
+  const historico = await getHistorico(matricula, monthsParam);
   const chartData = historico.map(({ handicapIndex, date }) => ({
     x: new Date(date).getTime(),
     y: handicapIndex,
@@ -328,6 +331,7 @@ export default function Tarjetas() {
       <Chart
         ref={chartRef}
         data={chartData}
+        months={months}
       />
     </Form>
   );
