@@ -5,7 +5,7 @@
   "description": "consulta de handicap",
   "scripts": {
     "build": "remix build",
-    "dev": "remix dev"
+    "dev": "remix dev --port 9001"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.0",
