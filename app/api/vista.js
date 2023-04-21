@@ -21,17 +21,23 @@ async function findPlayers(searchString) {
   return $("#table19 tr")
     .slice(2)
     .map((index, element) => {
-      const [matricula, fullName, handicapIndex, clubName] = $("td", element)
+      const [matricula, fullName, handicapIndexString, clubName] = $("td", element)
         .map((index, el) =>
           $(el)
             .text()
             .trim()
         )
         .get();
+      let handicapIndex = Number(handicapIndexString.replace(",", "."));
+      if (handicapIndexString === '+50') {
+        handicapIndex = 54
+      } else if (handicapIndexString.startsWith('+')) {
+        handicapIndex = handicapIndex * -1;
+      }
       return {
         matricula: Number(matricula),
         fullName: fullName.replace(/\s\s+/g, " ").toLowerCase().trim(),
-        handicapIndex: Number(handicapIndex.replace(",", ".")),
+        handicapIndex,
         handicapDate,
         clubName: clubName.toLowerCase().trim(),
       };
