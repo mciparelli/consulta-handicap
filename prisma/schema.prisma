@@ -3,13 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_LOCATION")
 }
 
 model handicap {
-  date          DateTime  @db.Date
-  handicapIndex Float     @db.Real
+  date          DateTime
+  handicapIndex Float
   matricula     Int
   jugadores     jugadores @relation(fields: [matricula], references: [matricula], onDelete: NoAction, onUpdate: NoAction)
 
@@ -17,8 +17,8 @@ model handicap {
 }
 
 model jugadores {
-  matricula Int        @id @unique
-  fullName  String     @default("")
-  clubName  String     @default("")
+  matricula Int        @id @unique @default(autoincrement())
+  fullName  String
+  clubName  String
   handicap  handicap[]
 }
