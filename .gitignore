@@ -1,11 +1,8 @@
 node_modules
 
-.cache
-.vercel
-.output
-
-public/build
-api
+/.cache
+/build
+/public/build
 .env
 .sublime-project
-app/styles/app.css
+db.sqlite3

@@ -7,7 +7,7 @@ export async function loader({ request }) {
   const players = await findPlayers(url.searchParams.get("searchString"));
   return json(players, {
     headers: {
-      "Cache-Control": `max-age=0, s-maxage=${date.secondsToNextThursday()}`,
+      "Cache-Control": `max-age=${date.secondsToNextThursday()}`,
     },
   });
 }
