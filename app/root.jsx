@@ -1,4 +1,4 @@
-import { Links, LiveReload, Meta, Outlet, Scripts } from "@remix-run/react";
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import PlayerChooser from "./components/player-chooser";
 
 import tailwindCss from "./styles/tailwind.css";
@@ -24,6 +24,7 @@ function Document({ children }) {
       <body className="bg-gray-100 h-[100vh] flex flex-col">
         {children}
         <Outlet />
+        <ScrollRestoration />
         <Scripts />
         <LiveReload />
       </body>

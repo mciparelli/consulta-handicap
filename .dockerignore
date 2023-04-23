@@ -1,0 +1,10 @@
+# flyctl launch added from .gitignore
+**/node_modules
+
+.cache
+build
+public/build
+**/.env
+**/.sublime-project
+**/db.sqlite3
+fly.toml
