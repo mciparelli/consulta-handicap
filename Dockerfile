@@ -6,13 +6,13 @@ ENV NODE_ENV production
 ENV DATABASE_LOCATION file:/data/db.sqlite3
 ENV PORT 8080
 
-# Install openssl for Prisma
+# Install openssl and sqlite3 for Prisma
 RUN apt-get update && apt-get install -y openssl sqlite3
 
 WORKDIR /app
 
 ADD . ./
-RUN npm run ci
+RUN npm install
 
 RUN npm run build
 
