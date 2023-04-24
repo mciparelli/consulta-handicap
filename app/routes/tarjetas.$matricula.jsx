@@ -341,7 +341,7 @@ function Tarjetas() {
 
 function ErrorBoundary() {
   const error = useRouteError();
-  console.log(error)
+  console.log(error);
   const { matricula } = useParams();
   return (
     <div className="m-auto text-2xl text-center">
