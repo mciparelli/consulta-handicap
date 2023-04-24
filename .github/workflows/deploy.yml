@@ -58,10 +58,6 @@ jobs:
 
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: current
-      - run: npm ci
       - name: 👀 Read app name
         uses: SebRollen/toml-action@v1.0.0
         id: app_name
