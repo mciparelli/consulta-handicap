@@ -1,7 +1,15 @@
 {
   "lint": {
+    "files": {
+      "include": ["app"],
+    },
     "rules": {
       "exclude": ["prefer-const"]
+    }
+  },
+  "fmt": {
+    "files": {
+      "include": ["app"],
     }
   }
 }
