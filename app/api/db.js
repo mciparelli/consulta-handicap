@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { date } from "~/utils";
 
 let prisma;
 
@@ -57,7 +56,7 @@ async function saveHistorico(players) {
   }
 }
 
-async function getHistorico(matricula, months) {
+function getHistorico(matricula, months) {
   const threeMonthsAgoDate = new Date();
   threeMonthsAgoDate.setMonth(threeMonthsAgoDate.getMonth() - months);
   return prisma.handicap.findMany({

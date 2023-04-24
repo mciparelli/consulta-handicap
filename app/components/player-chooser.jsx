@@ -32,6 +32,7 @@ export default function PlayerChooser() {
           className="p-3 rounded-md w-full md:w-80"
           autoComplete="off"
           onChange={onChange}
+          autoFocus={true}
         />
         {loading && (
           <ArrowPathIcon className="absolute right-2 top-0 bottom-0 my-auto w-5 animate-spin" />

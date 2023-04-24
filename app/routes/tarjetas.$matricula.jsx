@@ -1,9 +1,11 @@
 import { json } from "@remix-run/node";
 import {
   Form,
+  isRouteErrorResponse,
   Link,
   useLoaderData,
   useParams,
+  useRouteError,
   useSearchParams,
   useSubmit,
   useTransition,
@@ -62,7 +64,7 @@ function TableCell({ children, className = "", ...props }) {
 
 const months = [1, 3, 6];
 
-export async function loader(
+async function loader(
   { request, params: { matricula: matriculaAsString } },
 ) {
   if (!matriculaAsString) throw new Error("Expected matricula");
@@ -100,14 +102,14 @@ export async function loader(
   });
 }
 
-export function headers() {
+function headers() {
   return {
     "Cache-Control":
       `max-age=0, s-maxage=0, stale-while-revalidate=${date.secondsToNextThursday()}`,
   };
 }
 
-export default function Tarjetas() {
+function Tarjetas() {
   const hideMobileStyles = { display: { sm: "none", md: "table-cell" } };
   const chartRef = useRef();
   const submit = useSubmit();
@@ -337,19 +339,16 @@ export default function Tarjetas() {
   );
 }
 
-export function ErrorBoundary({ error }) {
+function ErrorBoundary() {
+  const error = useRouteError();
+  const { matricula } = useParams();
   return (
     <div className="m-auto text-2xl text-center">
-      Hubo un error al buscar las tarjetas de este jugador. Intente más tarde.
+      {isRouteErrorResponse
+        ? `No se encontró ningún jugador con la matrícula ${matricula}`
+        : "Hubo un error al buscar las tarjetas de este jugador. Intente más tarde."}
     </div>
   );
 }
 
-export function CatchBoundary() {
-  const { matricula } = useParams();
-  return (
-    <div className="m-auto text-2xl text-center">
-      No se encontró ningún jugador con la matrícula {matricula}
-    </div>
-  );
-}
+export { loader, Tarjetas as default, headers, ErrorBoundary }

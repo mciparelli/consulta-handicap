@@ -26,7 +26,10 @@ const date = {
     return Math.floor((nextThurs - now) / 1000);
   },
   format(date) {
-    const formatter = new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long' });
+    const formatter = new Intl.DateTimeFormat("es-AR", {
+      day: "numeric",
+      month: "long",
+    });
     return formatter.format(date);
   },
 };
