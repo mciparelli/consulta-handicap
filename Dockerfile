@@ -18,6 +18,3 @@ RUN npm run build
 ENV NODE_ENV production
 ENV DATABASE_LOCATION file:/data/db.sqlite3
 ENV PORT 8080
-
-CMD npm run start
-CMD ["/usr/sbin/varnishd", "-F", "-f", "/etc/varnish/default.vcl", "-T", "none"]

@@ -7,7 +7,10 @@ app = "consulta-handicap"
 kill_signal = "SIGINT"
 kill_timeout = 5
 primary_region = "scl"
-processes = []
+
+[processes]
+remix = "npm run start"
+varnish = "varnishd -F -f /etc/varnish/default.vcl -T none"
 
 [build]
 
@@ -29,7 +32,7 @@ processes = []
 [[services]]
   http_checks = []
   internal_port = 8080
-  processes = ["app"]
+  processes = ["remix", "varnish"]
   protocol = "tcp"
   script_checks = []
   [services.concurrency]
