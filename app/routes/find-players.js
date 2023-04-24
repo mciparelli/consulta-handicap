@@ -12,4 +12,4 @@ async function loader({ request }) {
   });
 }
 
-export { loader }
+export { loader };

@@ -5,7 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useRouteError
+  useRouteError,
 } from "@remix-run/react";
 import PlayerChooser from "./components/player-chooser";
 

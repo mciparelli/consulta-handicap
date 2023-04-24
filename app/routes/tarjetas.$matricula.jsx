@@ -351,4 +351,4 @@ function ErrorBoundary() {
   );
 }
 
-export { loader, Tarjetas as default, headers, ErrorBoundary }
+export { ErrorBoundary, headers, loader, Tarjetas as default };
