@@ -341,10 +341,11 @@ function Tarjetas() {
 
 function ErrorBoundary() {
   const error = useRouteError();
+  console.log(error)
   const { matricula } = useParams();
   return (
     <div className="m-auto text-2xl text-center">
-      {isRouteErrorResponse
+      {isRouteErrorResponse(error)
         ? `No se encontró ningún jugador con la matrícula ${matricula}`
         : "Hubo un error al buscar las tarjetas de este jugador. Intente más tarde."}
     </div>
