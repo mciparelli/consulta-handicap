@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y openssl sqlite3
 WORKDIR /app
 
 ADD . ./
-RUN npm install
+RUN npm install --production=false
 
 RUN npm run build
 
