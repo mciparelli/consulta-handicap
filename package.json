@@ -7,12 +7,14 @@
     "build": "remix build",
     "deploy": "flyctl deploy --remote-only",
     "dev": "remix dev",
-    "start": "remix-serve build",
+    "start": "cross-env NODE_ENV=production netlify dev",
     "varnish": "/usr/sbin/varnishd -F -f /etc/varnish/default.vcl -T none",
     "start-with-cache": "npm run start & npm run varnish",
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@netlify/functions": "^1.4.0",
+    "@remix-run/netlify": "^1.6.8",
     "@headlessui/react": "^1.7.0",
     "@heroicons/react": "^2.0.11",
     "@libsql/kysely-libsql": "^0.2.0",
