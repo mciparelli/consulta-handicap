@@ -6,3 +6,5 @@ node_modules
 .env
 .sublime-project
 db.sqlite3
+.vercel
+*.sql

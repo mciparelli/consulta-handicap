@@ -1,4 +1,5 @@
 import { Kysely, SqliteDialect } from "kysely";
+import { LibsqlDialect } from "@libsql/kysely-libsql";
 import Database from "better-sqlite3";
 
 interface handicap {
@@ -16,10 +17,17 @@ interface DB {
   jugadores: jugador;
 }
 
+const dialect = process.env.NODE_ENV === "production"
+  ? new LibsqlDialect({
+    url: process.env.DATABASE_URL,
+    authToken: process.env.DATABASE_TOKEN,
+  })
+  : new SqliteDialect({
+    database: new Database(process.env.DATABASE_URL as string),
+  });
+
 const db = new Kysely<DB>({
-  dialect: new SqliteDialect({
-    database: new Database("db.sqlite3"),
-  }),
+  dialect
 });
 
 const jugadores = {
