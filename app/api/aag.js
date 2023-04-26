@@ -1,7 +1,12 @@
 async function getTarjetas(matricula) {
-  const response = await fetch(
-    `https://www.aag.org.ar/cake/Usuarios/getTarjetas/${matricula}`,
-  );
+  let response;
+  try {
+    response = await fetch(
+      `https://www.aag.org.ar/cake/Usuarios/getTarjetas/${matricula}`,
+    );
+  } catch (err) {
+    console.log(err);
+  }
   const result = await response.json();
 
   return result.map((tarjeta) => {
@@ -15,8 +20,7 @@ async function getTarjetas(matricula) {
     const diferencial = tarjeta.Diferencial;
     const date = new Date(tarjeta.FechaTorneo);
     const cargaDate = new Date(tarjeta.FechaCarga);
-    // set to almost midnight to avoid having the date changed depending on where we are
-    date.setHours(23);
+    date.setUTCHours(0);
     const id = `${clubId}-${date.getTime()}-${diferencial}`;
     return {
       id,

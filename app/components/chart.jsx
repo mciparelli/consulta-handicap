@@ -9,7 +9,6 @@ export default forwardRef(function Chart({ data, months }, ref) {
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
   const notMobile = useMediaQuery({ query: "(min-width: 640px)" });
-  if (data.length < 2) return null;
   const handicaps = data.map((v) => v.y);
   const monthsBack = Number(searchParams.get("months")) || months[0];
   let ticksEveryNDays = notMobile ? 7 : 14;

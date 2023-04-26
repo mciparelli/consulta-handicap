@@ -1,8 +1,8 @@
 vcl 4.0;
 
 backend default {
-  .host = "consulta-handicap.fly.dev";
-  .port = "80";
+  .host = "127.0.0.1";
+  .port = "8080";
 }
 
 sub vcl_recv {

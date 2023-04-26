@@ -1,7 +1,7 @@
 # base node image
-FROM node:current as base
+FROM node:current-slim as base
 
-# Install openssl and sqlite3 for Prisma
+# Install openssl, sqlite3 and varnish
 RUN apt-get update && apt-get install -y openssl sqlite3 varnish
 
 WORKDIR /app
@@ -19,4 +19,4 @@ ENV NODE_ENV production
 ENV DATABASE_LOCATION file:/data/db.sqlite3
 ENV PORT 8080
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start-with-cache"]

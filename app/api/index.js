@@ -1,12 +1,29 @@
 import * as vista from "./vista";
 import * as aag from "./aag";
-import * as db from "./db";
+import { handicap, jugadores } from "./db";
+
+async function saveHistorico(playersInfo) {
+  await jugadores.upsertMany(
+    playersInfo.map(({ matricula, clubName, fullName }) => ({
+      matricula,
+      clubName,
+      fullName,
+    })),
+  );
+  await handicap.upsertMany(
+    playersInfo.map(({ matricula, handicapIndex, handicapDate }) => ({
+      matricula,
+      handicapIndex,
+      date: handicapDate,
+    })),
+  );
+}
 
 async function findPlayers(searchString) {
   if (searchString?.length < 3) return null;
-  const players = await vista.findPlayers(searchString);
-  db.saveHistorico(players); // save but no need to wait on response
-  return players;
+  const playersInfo = await vista.findPlayers(searchString);
+  saveHistorico(playersInfo); // save but no need to wait on response
+  return playersInfo;
 }
 
 function getSelectedIds(tarjetas) {
@@ -64,17 +81,20 @@ async function getTarjetas(matricula, todas) {
   return [...toReturn, ...historicas];
 }
 
-const getHistorico = db.getHistorico;
+const getHistorico = handicap.getHistorico;
 
 async function getPlayer(matricula) {
-  let dbPlayer = await db.getPlayer(matricula);
-  const now = new Date();
-  const timeDiff = now.getTime() - dbPlayer?.handicapDate.getTime();
-  const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-  const timeToUpdate = daysDiff >= 7;
-  if (dbPlayer && !timeToUpdate) return dbPlayer;
+  const dbPlayer = await jugadores.findWithLatestHandicap(matricula);
+  if (dbPlayer) {
+    const now = new Date();
+    now.setUTCHours(0);
+    const msDiff = now - (new Date(dbPlayer.handicapDate));
+    const daysDiff = Math.floor(msDiff / (1000 * 60 * 60 * 24));
+    const timeToUpdate = daysDiff >= 7;
+    if (!timeToUpdate) return dbPlayer;
+  }
   const [player] = await findPlayers(matricula);
   return player;
 }
 
-export { findPlayers, getHistorico, getPlayer, getTarjetas };
+export { findPlayers, getHistorico, getPlayer, getTarjetas, saveHistorico };

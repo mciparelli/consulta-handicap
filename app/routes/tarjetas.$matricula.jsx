@@ -75,7 +75,7 @@ async function loader(
   const tarjetas = await getTarjetas(matricula, todas);
   const historico = await getHistorico(matricula, monthsParam);
   const chartData = historico.map(({ handicapIndex, date }) => ({
-    x: new Date(date).getTime(),
+    x: (new Date(date).getTime()),
     y: handicapIndex,
   }));
   const player = await getPlayer(
@@ -90,14 +90,14 @@ async function loader(
     fullName,
     clubName,
     handicapIndex,
-    handicapDate: handicapDateString,
+    handicapDate,
   } = player;
   return json({
     tarjetas,
     fullName,
     clubName,
     handicapIndex,
-    handicapDateString,
+    handicapDate,
     chartData,
   });
 }
@@ -122,7 +122,7 @@ function Tarjetas() {
     fullName,
     clubName,
     handicapIndex,
-    handicapDateString,
+    handicapDate,
     chartData,
   } = useLoaderData();
   const [orderBy, setOrderBy] = useState("fecha");
@@ -174,7 +174,7 @@ function Tarjetas() {
       </div>
     );
   }
-  let untilDate = new Date(handicapDateString);
+  let untilDate = new Date(handicapDate);
   untilDate.setDate(untilDate.getDate() + 7);
   return (
     <Form
@@ -341,7 +341,6 @@ function Tarjetas() {
 
 function ErrorBoundary() {
   const error = useRouteError();
-  console.log(error);
   const { matricula } = useParams();
   return (
     <div className="m-auto text-2xl text-center">

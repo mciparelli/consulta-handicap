@@ -61,7 +61,6 @@ function App() {
 
 function ErrorBoundary() {
   const error = useRouteError();
-  console.log(error);
   return (
     <Document>
       <Header />
