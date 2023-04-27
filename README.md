@@ -1,44 +1,62 @@
 # Welcome to Remix!
 
 - [Remix Docs](https://remix.run/docs)
+- [Netlify Functions](https://www.netlify.com/products/functions/)
 
-## Fly Setup
+## Netlify Setup
 
-1. [Install `flyctl`](https://fly.io/docs/getting-started/installing-flyctl/)
-
-2. Sign up and log in to Fly
+1. Install the [Netlify CLI](https://www.netlify.com/products/dev/):
 
 ```sh
-flyctl auth signup
+npm i -g netlify-cli
 ```
 
-3. Setup Fly. It might ask if you want to deploy, say no since you haven't built
-   the app yet.
+If you have previously installed the Netlify CLI, you should update it to the latest version:
 
 ```sh
-flyctl launch
+npm i -g netlify-cli@latest
+```
+
+2. Sign up and log in to Netlify:
+
+```sh
+netlify login
+```
+
+3. Create a new site:
+
+```sh
+netlify init
 ```
 
 ## Development
 
-From your terminal:
+The Remix dev server starts your app in development mode, rebuilding assets on file changes. To start the Remix dev server:
 
 ```sh
 npm run dev
 ```
 
-This starts your app in development mode, rebuilding assets on file changes.
+Open up [http://localhost:3000](http://localhost:3000), and you should be ready to go!
+
+The Netlify CLI builds a production version of your Remix App Server and splits it into Netlify Functions that run locally. This includes any custom Netlify functions you've developed. The Netlify CLI runs all of this in its development mode.
+
+```sh
+netlify dev
+```
+
+Open up [http://localhost:3000](http://localhost:3000), and you should be ready to go!
+
+Note: When running the Netlify CLI, file changes will rebuild assets, but you will not see the changes to the page you are on unless you do a browser refresh of the page. Due to how the Netlify CLI builds the Remix App Server, it does not support hot module reloading.
 
 ## Deployment
 
-If you've followed the setup instructions already, all you need to do is run
-this:
+There are two ways to deploy your app to Netlify, you can either link your app to your git repo and have it auto deploy changes to Netlify, or you can deploy your app manually. If you've followed the setup instructions already, all you need to do is run this:
 
 ```sh
-npm run deploy
+# preview deployment
+netlify deploy --build
+
+# production deployment
+netlify deploy --build --prod
 ```
-
-You can run `flyctl info` to get the url and ip address of your server.
-
-Check out the [fly docs](https://fly.io/docs/getting-started/node/) for more
-information.
