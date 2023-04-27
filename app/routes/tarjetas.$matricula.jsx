@@ -30,20 +30,18 @@ function TableHeader({ children, className = "", title, onClick, direction }) {
     <th className="px-3 py-4 border-b border-slate-300 table-cell">
       <button
         onClick={onClick}
-        className={`relative flex mr-auto text-sm font-semibold items-center group ${
-          direction === undefined ? `hover:opacity-60` : ""
-        } ${className}`}
+        className={`relative flex mr-auto text-sm font-semibold items-center group ${direction === undefined ? `hover:opacity-60` : ""
+          } ${className}`}
         title={title}
       >
         {children}
         {direction === "desc" && <ArrowSmallDownIcon className={iconClass} />}
         {direction !== "desc" && (
           <ArrowSmallUpIcon
-            className={`${iconClass} ${
-              direction === undefined
+            className={`${iconClass} ${direction === undefined
                 ? "transition-opacity opacity-0 group-hover:opacity-100"
                 : ""
-            }`}
+              }`}
           />
         )}
       </button>
@@ -92,6 +90,7 @@ async function loader(
     handicapIndex,
     handicapDate,
   } = player;
+  console.log({ handicapDate })
   return json({
     tarjetas,
     fullName,
@@ -125,6 +124,7 @@ function Tarjetas() {
     handicapDate,
     chartData,
   } = useLoaderData();
+  console.log({ handicapDate })
   const [orderBy, setOrderBy] = useState("fecha");
   const [ascSort, setAscSort] = useState(false);
   const sortDirection = ascSort ? "asc" : "desc";
@@ -291,16 +291,14 @@ function Tarjetas() {
                   id={tarjeta.historica
                     ? "historica-" + String(index - 20)
                     : undefined}
-                  className={`${bgColor} ${
-                    tarjeta.historica ? "opacity-50" : ""
-                  }`}
+                  className={`${bgColor} ${tarjeta.historica ? "opacity-50" : ""
+                    }`}
                   key={tarjeta.id}
                 >
                   <TableCell
-                    title={`Cargada ${cargaDate.getDate()}/${
-                      cargaDate.getMonth() +
+                    title={`Cargada ${cargaDate.getDate()}/${cargaDate.getMonth() +
                       1
-                    }/${cargaDate.getFullYear()}`}
+                      }/${cargaDate.getFullYear()}`}
                   >
                     {date.getDate()}/{date.getMonth() +
                       1}/{date.getFullYear()}
