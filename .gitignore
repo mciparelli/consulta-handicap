@@ -1,10 +1,15 @@
 node_modules
 
 /.cache
+.env
+.vercel
+.output
+
 /build
 /public/build
-.env
+/api/index.js
+/api/index.js.map
+
 .sublime-project
 db.sqlite3
-.vercel
 *.sql
