@@ -5,11 +5,7 @@
   "description": "consulta de handicap",
   "scripts": {
     "build": "remix build",
-    "deploy": "flyctl deploy --remote-only",
     "dev": "remix dev",
-    "start": "remix-serve build",
-    "varnish": "/usr/sbin/varnishd -F -f /etc/varnish/default.vcl -T none",
-    "start-with-cache": "npm run start & npm run varnish",
     "typecheck": "tsc"
   },
   "dependencies": {
