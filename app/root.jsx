@@ -1,3 +1,4 @@
+import { redirect } from '@remix-run/node';
 import {
   Links,
   LiveReload,
@@ -10,6 +11,12 @@ import {
 import PlayerChooser from "./components/player-chooser";
 
 import tailwindCss from "./tailwind.css";
+
+export function loader({ request }) {
+  const url = new URL(request.url);
+  url.hostname = 'consulta-handicap.deno.dev';
+  return redirect(url);
+}
 
 function links() {
   return [{
