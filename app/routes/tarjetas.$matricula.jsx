@@ -30,20 +30,18 @@ function TableHeader({ children, className = "", title, onClick, direction }) {
     <th className="px-3 py-4 border-b border-slate-300 table-cell">
       <button
         onClick={onClick}
-        className={`relative flex mr-auto text-sm font-semibold items-center group ${
-          direction === undefined ? `hover:opacity-60` : ""
-        } ${className}`}
+        className={`relative flex mr-auto text-sm font-semibold items-center group ${direction === undefined ? `hover:opacity-60` : ""
+          } ${className}`}
         title={title}
       >
         {children}
         {direction === "desc" && <ArrowSmallDownIcon className={iconClass} />}
         {direction !== "desc" && (
           <ArrowSmallUpIcon
-            className={`${iconClass} ${
-              direction === undefined
-                ? "transition-opacity opacity-0 group-hover:opacity-100"
-                : ""
-            }`}
+            className={`${iconClass} ${direction === undefined
+              ? "transition-opacity opacity-0 group-hover:opacity-100"
+              : ""
+              }`}
           />
         )}
       </button>
@@ -175,6 +173,9 @@ function Tarjetas() {
     );
   }
   let untilDate = new Date(handicapDate);
+  if (untilDate.getHours() > 0) {
+    untilDate.setDate(untilDate.getDate() + 1);
+  }
   untilDate.setDate(untilDate.getDate() + 7);
   return (
     <Form
@@ -291,16 +292,14 @@ function Tarjetas() {
                   id={tarjeta.historica
                     ? "historica-" + String(index - 20)
                     : undefined}
-                  className={`${bgColor} ${
-                    tarjeta.historica ? "opacity-50" : ""
-                  }`}
+                  className={`${bgColor} ${tarjeta.historica ? "opacity-50" : ""
+                    }`}
                   key={tarjeta.id}
                 >
                   <TableCell
-                    title={`Cargada ${cargaDate.getDate()}/${
-                      cargaDate.getMonth() +
+                    title={`Cargada ${cargaDate.getDate()}/${cargaDate.getMonth() +
                       1
-                    }/${cargaDate.getFullYear()}`}
+                      }/${cargaDate.getFullYear()}`}
                   >
                     {date.getDate()}/{date.getMonth() +
                       1}/{date.getFullYear()}
