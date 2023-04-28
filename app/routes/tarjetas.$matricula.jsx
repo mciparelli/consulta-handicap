@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json } from "@remix-run/deno";
 import {
   Form,
   isRouteErrorResponse,
@@ -10,7 +10,7 @@ import {
   useSubmit,
   useTransition,
 } from "@remix-run/react";
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, Suspense, useRef, useState } from "react";
 import {
   ArrowSmallDownIcon,
   ArrowSmallUpIcon,
@@ -30,20 +30,18 @@ function TableHeader({ children, className = "", title, onClick, direction }) {
     <th className="px-3 py-4 border-b border-slate-300 table-cell">
       <button
         onClick={onClick}
-        className={`relative flex mr-auto text-sm font-semibold items-center group ${
-          direction === undefined ? `hover:opacity-60` : ""
-        } ${className}`}
+        className={`relative flex mr-auto text-sm font-semibold items-center group ${direction === undefined ? `hover:opacity-60` : ""
+          } ${className}`}
         title={title}
       >
         {children}
         {direction === "desc" && <ArrowSmallDownIcon className={iconClass} />}
         {direction !== "desc" && (
           <ArrowSmallUpIcon
-            className={`${iconClass} ${
-              direction === undefined
-                ? "transition-opacity opacity-0 group-hover:opacity-100"
-                : ""
-            }`}
+            className={`${iconClass} ${direction === undefined
+              ? "transition-opacity opacity-0 group-hover:opacity-100"
+              : ""
+              }`}
           />
         )}
       </button>
@@ -291,16 +289,14 @@ function Tarjetas() {
                   id={tarjeta.historica
                     ? "historica-" + String(index - 20)
                     : undefined}
-                  className={`${bgColor} ${
-                    tarjeta.historica ? "opacity-50" : ""
-                  }`}
+                  className={`${bgColor} ${tarjeta.historica ? "opacity-50" : ""
+                    }`}
                   key={tarjeta.id}
                 >
                   <TableCell
-                    title={`Cargada ${cargaDate.getDate()}/${
-                      cargaDate.getMonth() +
+                    title={`Cargada ${cargaDate.getDate()}/${cargaDate.getMonth() +
                       1
-                    }/${cargaDate.getFullYear()}`}
+                      }/${cargaDate.getFullYear()}`}
                   >
                     {date.getDate()}/{date.getMonth() +
                       1}/{date.getFullYear()}
@@ -330,11 +326,13 @@ function Tarjetas() {
           </tbody>
         </table>
       </div>
-      <Chart
-        ref={chartRef}
-        data={chartData}
-        months={months}
-      />
+      <Suspense fallback={null}>
+        <Chart
+          ref={chartRef}
+          data={chartData}
+          months={months}
+        />
+      </Suspense>
     </Form>
   );
 }

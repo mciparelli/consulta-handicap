@@ -1,12 +1,7 @@
 async function getTarjetas(matricula) {
-  let response;
-  try {
-    response = await fetch(
-      `https://www.aag.org.ar/cake/Usuarios/getTarjetas/${matricula}`,
-    );
-  } catch (err) {
-    console.log(err);
-  }
+  const response = await fetch(
+    `https://www.aag.org.ar/cake/Usuarios/getTarjetas/${matricula}`,
+  );
   const result = await response.json();
 
   return result.map((tarjeta) => {

@@ -1,8 +1,8 @@
-import { createClient } from "@libsql/client/http"
+import { createClient } from "@libsql/client/web"
 
 const db = createClient({
-  url: process.env.DATABASE_URL,
-  authToken: process.env.DATABASE_TOKEN,
+  url: Deno.env.get("DATABASE_URL"),
+  authToken: Deno.env.get("DATABASE_TOKEN"),
 });
 
 const jugadores = {

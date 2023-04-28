@@ -15,6 +15,7 @@ export default forwardRef(function Chart({ data, months }, ref) {
   if (monthsBack === 6) {
     ticksEveryNDays = notMobile ? 14 : 28;
   }
+  if (typeof document === 'undefined') throw new Error('Chart should only render client-side.')
   return (
     <Fragment>
       <div className="mt-4 mb-2 w-48">
@@ -45,17 +46,15 @@ export default forwardRef(function Chart({ data, months }, ref) {
                   <Listbox.Option
                     key={month}
                     className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? "bg-amber-100 text-amber-900" : "text-gray-900"
+                      `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-amber-100 text-amber-900" : "text-gray-900"
                       }`}
                     value={month}
                   >
                     {({ selected }) => (
                       <>
                         <span
-                          className={`block truncate ${
-                            selected ? "font-medium" : "font-normal"
-                          }`}
+                          className={`block truncate ${selected ? "font-medium" : "font-normal"
+                            }`}
                         >
                           {month === 1
                             ? "Último mes"
@@ -113,9 +112,8 @@ export default forwardRef(function Chart({ data, months }, ref) {
               time.setHours(time.getHours() + 3);
               const date = time.getDate();
               const month = time.getMonth() + 1;
-              return `${String(date).padStart(2, "0")}-${
-                String(month).padStart(2, "0")
-              }`;
+              return `${String(date).padStart(2, "0")}-${String(month).padStart(2, "0")
+                }`;
             },
             tickValues: `every ${ticksEveryNDays} days`,
             tickPadding: 12,

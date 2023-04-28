@@ -1,7 +1,14 @@
-import { installGlobals } from "@remix-run/node";
-import { createRequestHandler } from "@remix-run/vercel";
+import { serve } from "https://deno.land/std@0.128.0/http/server.ts";
+import { createRequestHandlerWithStaticFiles } from "@remix-run/deno";
+// Import path interpreted by the Remix compiler
 import * as build from "@remix-run/dev/server-build";
 
-installGlobals();
+const remixHandler = createRequestHandlerWithStaticFiles({
+  build,
+  mode: Deno.env.get("NODE_ENV"),
+  getLoadContext: () => ({}),
+});
 
-export default createRequestHandler({ build, mode: process.env.NODE_ENV });
+const port = Number(Deno.env.get("PORT")) || 8000;
+console.log(`Listening on http://localhost:${port}`);
+serve(remixHandler, { port });

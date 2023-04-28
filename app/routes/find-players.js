@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json } from "@remix-run/deno";
 import { findPlayers } from "~/api";
 import { date } from "~/utils";
 
