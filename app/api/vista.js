@@ -17,7 +17,7 @@ async function findPlayers(searchString) {
     Number,
   );
   const handicapDate = new Date(untilYear, untilMonth - 1, untilDate - 7);
-  handicapDate.setUTCHours(0);
+  handicapDate.setHours(7);
   return $("#table19 tr")
     .slice(2)
     .map((_index, element) => {

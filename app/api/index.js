@@ -87,8 +87,10 @@ async function getPlayer(matricula) {
   const dbPlayer = await jugadores.findWithLatestHandicap(matricula);
   if (dbPlayer) {
     const now = new Date();
-    now.setUTCHours(0);
-    const msDiff = now - (new Date(dbPlayer.handicapDate));
+    now.setHours(7);
+    const playerDate = new Date(dbPlayer.handicapDate);
+    playerDate.setHours(7);
+    const msDiff = now - playerDate;
     const daysDiff = Math.floor(msDiff / (1000 * 60 * 60 * 24));
     const timeToUpdate = daysDiff >= 7;
     if (!timeToUpdate) return dbPlayer;

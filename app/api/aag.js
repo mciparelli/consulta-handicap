@@ -20,7 +20,7 @@ async function getTarjetas(matricula) {
     const diferencial = tarjeta.Diferencial;
     const date = new Date(tarjeta.FechaTorneo);
     const cargaDate = new Date(tarjeta.FechaCarga);
-    date.setUTCHours(0);
+    date.setHours(7);
     const id = `${clubId}-${date.getTime()}-${diferencial}`;
     return {
       id,
