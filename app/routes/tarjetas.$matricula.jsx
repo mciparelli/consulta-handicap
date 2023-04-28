@@ -123,6 +123,7 @@ function Tarjetas() {
     handicapDate,
     chartData,
   } = useLoaderData();
+  console.log({ handicapDate })
   const [orderBy, setOrderBy] = useState("fecha");
   const [ascSort, setAscSort] = useState(false);
   const sortDirection = ascSort ? "asc" : "desc";
