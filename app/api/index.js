@@ -79,7 +79,6 @@ async function getTarjetas(matricula, todas) {
     ...tarjeta,
     historica: true,
   }));
-  console.log([...toReturn, ...historicas])
   return [...toReturn, ...historicas];
 }
 

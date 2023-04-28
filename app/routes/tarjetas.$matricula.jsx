@@ -173,7 +173,7 @@ function Tarjetas() {
       </div>
     );
   }
-  let untilDate = new Date(handicapDate);
+  let untilDate = date.make7Am(new Date(handicapDate))
   untilDate.setDate(untilDate.getDate() + 7);
   return (
     <Form

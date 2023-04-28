@@ -16,6 +16,7 @@ async function findPlayers(searchString) {
   const [untilDate, untilMonth, untilYear] = untilDateText.split("/").map(
     Number,
   );
+  const handicapDate = new Date(untilYear, untilMonth - 1, untilDate - 7);
   return $("#table19 tr")
     .slice(2)
     .map((_index, element) => {
@@ -39,7 +40,7 @@ async function findPlayers(searchString) {
         matricula: Number(matricula),
         fullName: fullName.replace(/\s\s+/g, " ").toLowerCase().trim(),
         handicapIndex,
-        handicapDate: (new Date()).toISOString().split("T")[0],
+        handicapDate: handicapDate.toISOString().split("T")[0],
         clubName: clubName.toLowerCase().trim(),
       };
     })

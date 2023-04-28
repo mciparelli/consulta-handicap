@@ -16,7 +16,7 @@ const jugadores = {
   },
   async findWithLatestHandicap(matricula) {
     const { rows: [player] } = await db.execute({
-      sql: 'select h.date as handicapDate, h.handicapIndex, h.matricula, j.fullName, j.clubName from handicap h inner join jugadores j on h.matricula = j.matricula where h.matricula = :matricula order by date limit 1;',
+      sql: 'select h.date as handicapDate, h.handicapIndex, h.matricula, j.fullName, j.clubName from handicap h inner join jugadores j on h.matricula = j.matricula where h.matricula = :matricula order by date desc limit 1;',
       args: { matricula }
     });
     if (!player || !player.fullName || !player.clubName) return null;
