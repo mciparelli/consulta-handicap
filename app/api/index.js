@@ -1,6 +1,7 @@
 import * as vista from "./vista";
 import * as aag from "./aag";
 import { handicap, jugadores } from "./db";
+import { date } from "~/utils";
 
 async function saveHistorico(playersInfo) {
   await jugadores.upsertMany(
@@ -78,6 +79,7 @@ async function getTarjetas(matricula, todas) {
     ...tarjeta,
     historica: true,
   }));
+  console.log([...toReturn, ...historicas])
   return [...toReturn, ...historicas];
 }
 
@@ -87,8 +89,8 @@ async function getPlayer(matricula) {
   const dbPlayer = await jugadores.findWithLatestHandicap(matricula);
   if (dbPlayer) {
     const now = new Date();
-    now.setUTCHours(0);
-    const msDiff = now - (new Date(dbPlayer.handicapDate));
+    const playerDate = date.make7Am(new Date(dbPlayer.handicapDate));
+    const msDiff = now - playerDate;
     const daysDiff = Math.floor(msDiff / (1000 * 60 * 60 * 24));
     const timeToUpdate = daysDiff >= 7;
     if (!timeToUpdate) return dbPlayer;

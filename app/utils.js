@@ -32,6 +32,12 @@ const date = {
     });
     return formatter.format(date);
   },
+  make7Am(auxDate) {
+    const timezoneHours = 3;
+    const timeOfChange = 7;
+    auxDate.setHours(auxDate.getHours() + timezoneHours + timeOfChange);
+    return auxDate;
+  }
 };
 
 export { date, hexToRGB };

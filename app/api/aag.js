@@ -1,3 +1,5 @@
+import { date as dateUtils } from "~/utils";
+
 async function getTarjetas(matricula) {
   const response = await fetch(
     `https://www.aag.org.ar/cake/Usuarios/getTarjetas/${matricula}`,
@@ -13,9 +15,8 @@ async function getTarjetas(matricula) {
     const courseRating = tarjeta.CourseRating;
     const PCC = tarjeta.PCC;
     const diferencial = tarjeta.Diferencial;
-    const date = new Date(tarjeta.FechaTorneo);
-    const cargaDate = new Date(tarjeta.FechaCarga);
-    date.setUTCHours(0);
+    const date = dateUtils.make7Am(new Date(tarjeta.FechaTorneo));
+    const cargaDate = dateUtils.make7Am(new Date(tarjeta.FechaCarga));
     const id = `${clubId}-${date.getTime()}-${diferencial}`;
     return {
       id,
