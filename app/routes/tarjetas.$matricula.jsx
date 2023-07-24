@@ -60,7 +60,7 @@ function TableCell({ children, className = "", ...props }) {
   );
 }
 
-const months = [1, 3, 6];
+const months = [1, 3, 6, 12];
 
 async function loader(
   { request, params: { matricula: matriculaAsString } },
