@@ -201,23 +201,6 @@ export default function Tarjetas() {
         >
         </div>
         <span>Ingresan el próximo jueves</span>
-        <label className="flex ml-auto text-sm">
-          <input
-            type="checkbox"
-            name="todas"
-            defaultChecked={viendoHistoricas}
-            className="w-4 mr-2"
-            onClick={(_e) => {
-              if (!viendoHistoricas) {
-                chartRef.current.scrollIntoView({
-                  behavior: "smooth",
-                  block: "end",
-                });
-              }
-            }}
-          />
-          Ver históricas
-        </label>
       </div>
       <div className="w-full overflow-x-auto">
         <table
