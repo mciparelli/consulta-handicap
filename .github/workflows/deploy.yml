@@ -31,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: 🦕 Deno Deploy CLI install
-        run: deno install --allow-read --allow-write --allow-env --allow-net --allow-run --no-check -r -f https://deno.land/x/deploy/deployctl.ts
+        run: deno install --allow-sys --allow-read --allow-write --allow-env --allow-net --allow-run --no-check -r -f https://deno.land/x/deploy/deployctl.ts
 
       - name: 🚀 Deploy to Deno Deploy
         run: npm run deploy
