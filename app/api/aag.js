@@ -32,7 +32,6 @@ async function getTarjetas(matricula) {
       slopeRating,
       is9Holes: tarjeta.Atributo === "9",
       processed: tarjeta.Procesado,
-      selected: tarjeta.Seleccionado
     };
   });
 }

@@ -65,7 +65,21 @@ async function getTarjetas(matricula, todas) {
       unprocessed.push(tarjeta);
     }
   }
-  return allTarjetas;
+  // dont care about older ones
+  const last20Tarjetas = processed.slice(0, 20);
+  const selectedIds = getSelectedIds(last20Tarjetas);
+  const toReturn = [...unprocessed, ...last20Tarjetas].map((tarjeta) => {
+    return {
+      ...tarjeta,
+      selected: selectedIds.includes(tarjeta.id),
+    };
+  });
+  if (!todas) return toReturn;
+  const historicas = processed.slice(21).map((tarjeta) => ({
+    ...tarjeta,
+    historica: true,
+  }));
+  return [...toReturn, ...historicas];
 }
 
 const getHistorico = handicap.getHistorico;
