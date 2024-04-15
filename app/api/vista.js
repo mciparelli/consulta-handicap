@@ -12,7 +12,7 @@ async function findPlayers(searchString) {
   const buffer = await response.arrayBuffer();
   const result = new TextDecoder("ISO-8859-1").decode(buffer);
   const $ = cheerio.load(result);
-  const [domUnparsed, monthString, yearUnparsed] = $("#table31 tr:eq(1)").text().split("/");
+  const [domUnparsed, monthString, yearUnparsed] = $("#table31 tr:eq(0)").text().split("/");
   const domString = domUnparsed.slice(-2);
   const yearString = yearUnparsed.slice(0, 4);
   const [untilDom, untilMonth, untilYear] = [domString, monthString, yearString].map(
