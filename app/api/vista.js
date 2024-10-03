@@ -39,7 +39,7 @@ async function findPlayers(searchString) {
         handicapIndex = handicapIndex * -1;
       }
       return {
-        matricula: Number(matricula),
+        matricula: Number(matricula.replace(/\D/g, '')),
         fullName: fullName.replace(/\s\s+/g, " ").toLowerCase().trim(),
         handicapIndex,
         handicapDate: handicapDate.toISOString().split("T")[0],
