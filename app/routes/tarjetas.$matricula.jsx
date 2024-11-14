@@ -70,7 +70,7 @@ async function loader(
   const todas = url.searchParams.get("todas");
   const monthsParam = url.searchParams.get("months") ?? months[0];
   const matricula = Number(matriculaAsString);
-  const tarjetas = await getTarjetas(matricula, todas);
+  // const tarjetas = await getTarjetas(matricula, todas);
   const historico = await getHistorico(matricula, monthsParam);
   const chartData = historico.map(({ handicapIndex, date }) => ({
     x: (new Date(date).getTime()),
@@ -91,7 +91,7 @@ async function loader(
     handicapDate,
   } = player;
   return json({
-    tarjetas,
+    // tarjetas,
     fullName,
     clubName,
     handicapIndex,
@@ -116,7 +116,7 @@ function Tarjetas() {
   const [searchParams] = useSearchParams();
   const viendoHistoricas = Boolean(searchParams.get("todas"));
   const {
-    tarjetas,
+    // tarjetas,
     fullName,
     clubName,
     handicapIndex,
@@ -134,46 +134,54 @@ function Tarjetas() {
     setAscSort(newOrderBy === orderBy ? !ascSort : true);
     setOrderBy(newOrderBy);
   };
-  const sortedTarjetas = tarjetas.sort((a, b) => {
-    let value;
-    switch (orderBy) {
-      case "fecha": {
-        value = new Date(a.date) - new Date(b.date);
-        break;
-      }
-      case "club": {
-        value = a.clubName.localeCompare(b.clubName);
-        break;
-      }
-      case "calificacion": {
-        value = a.courseRating - b.courseRating;
-        break;
-      }
-      case "slope": {
-        value = a.slopeRating - b.slopeRating;
-        break;
-      }
-      case "score-adj": {
-        value = a.adjustedScore - b.adjustedScore;
-        break;
-      }
-      case "dif": {
-        value = a.diferencial - b.diferencial;
-        break;
-      }
-    }
-    return ascSort ? value : value * -1;
-  });
-  const mostrandoHistoricas = sortedTarjetas.length > 20;
-  if (sortedTarjetas.length === 0) {
-    return (
-      <div className="m-auto text-2xl text-center">
-        No se encontraron tarjetas para {fullName}
-      </div>
-    );
-  }
+  // const sortedTarjetas = tarjetas.sort((a, b) => {
+  //   let value;
+  //   switch (orderBy) {
+  //     case "fecha": {
+  //       value = new Date(a.date) - new Date(b.date);
+  //       break;
+  //     }
+  //     case "club": {
+  //       value = a.clubName.localeCompare(b.clubName);
+  //       break;
+  //     }
+  //     case "calificacion": {
+  //       value = a.courseRating - b.courseRating;
+  //       break;
+  //     }
+  //     case "slope": {
+  //       value = a.slopeRating - b.slopeRating;
+  //       break;
+  //     }
+  //     case "score-adj": {
+  //       value = a.adjustedScore - b.adjustedScore;
+  //       break;
+  //     }
+  //     case "dif": {
+  //       value = a.diferencial - b.diferencial;
+  //       break;
+  //     }
+  //   }
+  //   return ascSort ? value : value * -1;
+  // });
+  // const mostrandoHistoricas = sortedTarjetas.length > 20;
+  // if (sortedTarjetas.length === 0) {
+  //   return (
+  //     <div className="m-auto text-2xl text-center">
+  //       No se encontraron tarjetas para {fullName}
+  //     </div>
+  //   );
+  // }
   let untilDate = date.make7Am(new Date(handicapDate))
   untilDate.setDate(untilDate.getDate() + 7);
+  return (
+    <>
+      <div className="m-auto text-2xl text-center">
+        <div>Este servicio funcionaba con URLs públicas de la AAG quien ahora decidió protegerlas con un captcha.</div>
+        <div>Puede consultar sus tarjetas cargadas en la AAG en formato JSON <a className="text-blue-500" target="_blank" href={`https://www.aag.org.ar/cake/Usuarios/getTarjetas/${matricula}`}>desde aquí</a>.</div>
+      </div>
+    </>
+  )
   return (
     <Form
       className="p-5"
