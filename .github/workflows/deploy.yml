@@ -18,11 +18,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-
       - name: 🦕 Install Deno
-        uses: denoland/setup-deno@v1
+        uses: denoland/setup-deno@v2
         with:
-          deno-version: vx.x.x
+          deno-version: v2.x
 
       - name: Install dependencies
         run: npm install
@@ -30,10 +29,10 @@ jobs:
       - name: 🔨 Build remix
         run: npm run build
 
-      - name: 🦕 Deno Deploy CLI install
-        run: deno install --allow-sys --allow-read --allow-write --allow-env --allow-net --allow-run --no-check -r -f https://deno.land/x/deploy/deployctl.ts
-
       - name: 🚀 Deploy to Deno Deploy
-        run: npm run deploy
-        env:
-          DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
+        uses: denoland/deployctl@v1
+        with:
+          project: "consulta-handicap"
+          entrypoint: "build/index.js"
+          include: build,public
+          root: "."
