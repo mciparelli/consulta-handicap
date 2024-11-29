@@ -2,7 +2,7 @@ import { date as dateUtils } from "~/utils";
 
 async function getTarjetas(matricula) {
   const response = await fetch(
-    `https://www.aag.org.ar/cake/Usuarios/getTarjetas/${matricula}`,
+    `https://aag-tarjetas.onrender.com/tarjetas/${matricula}`,
   );
   const result = await response.json();
 
