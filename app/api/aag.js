@@ -2,7 +2,7 @@ import { date as dateUtils } from "~/utils";
 
 async function getTarjetas(matricula) {
   const response = await fetch(
-    `https://aag-tarjetas.onrender.com/tarjetas/${matricula}`,
+    `https://aag-tarjetas.fly.dev/tarjetas/${matricula}`,
   );
   const result = await response.json();
 
