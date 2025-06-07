@@ -30,18 +30,20 @@ function TableHeader({ children, className = "", title, onClick, direction }) {
     <th className="px-3 py-4 border-b border-slate-300 table-cell">
       <button
         onClick={onClick}
-        className={`relative flex mr-auto text-sm font-semibold items-center group ${direction === undefined ? `hover:opacity-60` : ""
-          } ${className}`}
+        className={`relative flex mr-auto text-sm font-semibold items-center group ${
+          direction === undefined ? `hover:opacity-60` : ""
+        } ${className}`}
         title={title}
       >
         {children}
         {direction === "desc" && <ArrowSmallDownIcon className={iconClass} />}
         {direction !== "desc" && (
           <ArrowSmallUpIcon
-            className={`${iconClass} ${direction === undefined
-              ? "transition-opacity opacity-0 group-hover:opacity-100"
-              : ""
-              }`}
+            className={`${iconClass} ${
+              direction === undefined
+                ? "transition-opacity opacity-0 group-hover:opacity-100"
+                : ""
+            }`}
           />
         )}
       </button>
@@ -62,34 +64,31 @@ function TableCell({ children, className = "", ...props }) {
 
 const months = [1, 3, 6, 12];
 
-async function loader(
-  { request, params: { matricula: matriculaAsString } },
-) {
+async function loader({ request, params: { matricula: matriculaAsString } }) {
   if (!matriculaAsString) throw new Error("Expected matricula");
   const url = new URL(request.url);
   const todas = url.searchParams.get("todas");
   const monthsParam = url.searchParams.get("months") ?? months[0];
   const matricula = Number(matriculaAsString);
+  console.time("tarjetas" + matricula);
   const tarjetas = await getTarjetas(matricula, todas);
+  console.timeEnd("tarjetas" + matricula);
+  console.time("historico" + matricula);
   const historico = await getHistorico(matricula, monthsParam);
+  console.timeEnd("historico" + matricula);
   const chartData = historico.map(({ handicapIndex, date }) => ({
-    x: (new Date(date).getTime()),
+    x: new Date(date).getTime(),
     y: handicapIndex,
   }));
-  const player = await getPlayer(
-    matricula,
-  );
+  console.time("player" + matricula);
+  const player = await getPlayer(matricula);
+  console.timeEnd("player" + matricula);
   if (!player) {
     throw new Response("Not Found", {
       status: 404,
     });
   }
-  const {
-    fullName,
-    clubName,
-    handicapIndex,
-    handicapDate,
-  } = player;
+  const { fullName, clubName, handicapIndex, handicapDate } = player;
   return json({
     tarjetas,
     fullName,
@@ -102,8 +101,7 @@ async function loader(
 
 function headers() {
   return {
-    "Cache-Control":
-      `max-age=0, s-maxage=0, stale-while-revalidate=${date.secondsToNextThursday()}`,
+    "Cache-Control": `max-age=0, s-maxage=0, stale-while-revalidate=${date.secondsToNextThursday()}`,
   };
 }
 
@@ -172,7 +170,7 @@ function Tarjetas() {
       </div>
     );
   }
-  let untilDate = date.make7Am(new Date(handicapDate))
+  let untilDate = date.make7Am(new Date(handicapDate));
   untilDate.setDate(untilDate.getDate() + 7);
   return (
     <Form
@@ -191,15 +189,9 @@ function Tarjetas() {
         </span>
       </div>
       <div className="flex py-4 items-center">
-        <div
-          className={`mr-2 rounded-sm w-8 h-4 ${bg.best}`}
-        >
-        </div>
+        <div className={`mr-2 rounded-sm w-8 h-4 ${bg.best}`}></div>
         <span>Ocho mejores</span>
-        <div
-          className={`ml-6 mr-2 rounded-sm w-8 h-4 ${bg.next}`}
-        >
-        </div>
+        <div className={`ml-6 mr-2 rounded-sm w-8 h-4 ${bg.next}`}></div>
         <span>Ingresan el próximo jueves</span>
         <label className="flex ml-auto text-sm">
           <input
@@ -246,9 +238,9 @@ function Tarjetas() {
                 Score (ajustado)
               </TableHeader>
               <TableHeader
-                direction={orderBy === "calificacion"
-                  ? sortDirection
-                  : undefined}
+                direction={
+                  orderBy === "calificacion" ? sortDirection : undefined
+                }
                 onClick={(_ev) => sortBy("calificacion")}
                 className="mx-auto"
               >
@@ -286,20 +278,22 @@ function Tarjetas() {
               }
               return (
                 <tr
-                  id={tarjeta.historica
-                    ? "historica-" + String(index - 20)
-                    : undefined}
-                  className={`${bgColor} ${tarjeta.historica ? "opacity-50" : ""
-                    }`}
+                  id={
+                    tarjeta.historica
+                      ? "historica-" + String(index - 20)
+                      : undefined
+                  }
+                  className={`${bgColor} ${
+                    tarjeta.historica ? "opacity-50" : ""
+                  }`}
                   key={tarjeta.id}
                 >
                   <TableCell
-                    title={`Cargada ${cargaDate.getDate()}/${cargaDate.getMonth() +
-                      1
-                      }/${cargaDate.getFullYear()}`}
+                    title={`Cargada ${cargaDate.getDate()}/${
+                      cargaDate.getMonth() + 1
+                    }/${cargaDate.getFullYear()}`}
                   >
-                    {date.getDate()}/{date.getMonth() +
-                      1}/{date.getFullYear()}
+                    {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
                   </TableCell>
                   <TableCell className="capitalize">
                     {tarjeta.clubName}
@@ -327,11 +321,7 @@ function Tarjetas() {
         </table>
       </div>
       <Suspense fallback={null}>
-        <Chart
-          ref={chartRef}
-          data={chartData}
-          months={months}
-        />
+        <Chart ref={chartRef} data={chartData} months={months} />
       </Suspense>
     </Form>
   );
