@@ -74,14 +74,14 @@ async function loader({ request, params: { matricula: matriculaAsString } }) {
   const tarjetas = await getTarjetas(matricula, todas);
   console.timeEnd("tarjetas" + matricula);
   console.time("historico" + matricula);
-  const historico = await getHistorico(matricula, monthsParam);
+  const historico = null; // await getHistorico(matricula, monthsParam);
   console.timeEnd("historico" + matricula);
-  const chartData = historico.map(({ handicapIndex, date }) => ({
+  const chartData = null; /* historico.map(({ handicapIndex, date }) => ({
     x: new Date(date).getTime(),
     y: handicapIndex,
-  }));
+  }));*/
   console.time("player" + matricula);
-  const player = await getPlayer(matricula);
+  const player = {}; //await getPlayer(matricula);
   console.timeEnd("player" + matricula);
   if (!player) {
     throw new Response("Not Found", {
@@ -95,7 +95,7 @@ async function loader({ request, params: { matricula: matriculaAsString } }) {
     clubName,
     handicapIndex,
     handicapDate,
-    chartData,
+    chartData: null,
   });
 }
 
@@ -170,8 +170,8 @@ function Tarjetas() {
       </div>
     );
   }
-  let untilDate = date.make7Am(new Date(handicapDate));
-  untilDate.setDate(untilDate.getDate() + 7);
+  let untilDate = handicapDate ? date.make7Am(new Date(handicapDate)) : null;
+  untilDate?.setDate(untilDate.getDate() + 7);
   return (
     <Form
       className="p-5"
@@ -180,13 +180,17 @@ function Tarjetas() {
       onChange={(event) => submit(event.currentTarget)}
     >
       <div className="flex text-xl py-3">
-        <span className="hidden lg:inline-flex capitalize">
-          {fullName} ({clubName}).
-        </span>
+        {fullName ? (
+          <span className="hidden lg:inline-flex capitalize">
+            {fullName} ({clubName}).
+          </span>
+        ) : null}
         <span className="lg:ml-1">Matrícula {matricula}.</span>
-        <span className="ml-auto text-right">
-          Hándicap Index: {handicapIndex} (hasta el {date.format(untilDate)})
-        </span>
+        {untilDate ? (
+          <span className="ml-auto text-right">
+            Hándicap Index: {handicapIndex} (hasta el {date.format(untilDate)})
+          </span>
+        ) : null}
       </div>
       <div className="flex py-4 items-center">
         <div className={`mr-2 rounded-sm w-8 h-4 ${bg.best}`}></div>
@@ -320,9 +324,9 @@ function Tarjetas() {
           </tbody>
         </table>
       </div>
-      <Suspense fallback={null}>
+      {/*<Suspense fallback={null}>
         <Chart ref={chartRef} data={chartData} months={months} />
-      </Suspense>
+      </Suspense>*/}
     </Form>
   );
 }

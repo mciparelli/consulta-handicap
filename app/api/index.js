@@ -9,14 +9,14 @@ async function saveHistorico(playersInfo) {
       matricula,
       clubName,
       fullName,
-    })),
+    }))
   );
   await handicap.upsertMany(
     playersInfo.map(({ matricula, handicapIndex, handicapDate }) => ({
       matricula,
       handicapIndex,
       date: handicapDate,
-    })),
+    }))
   );
 }
 
@@ -86,6 +86,7 @@ const getHistorico = handicap.getHistorico;
 
 async function getPlayer(matricula) {
   const dbPlayer = await jugadores.findWithLatestHandicap(matricula);
+  console.log(dbPlayer);
   if (dbPlayer) {
     const now = new Date();
     const playerDate = date.make7Am(new Date(dbPlayer.handicapDate));
