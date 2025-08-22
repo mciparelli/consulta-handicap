@@ -9,19 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-
-export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-];
+import PlayerChooser from "./components/player-chooser";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -29,10 +17,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Consulta de handicap" />
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-gray-100 h-[100vh] flex flex-col">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -41,8 +30,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+function Header() {
+  return (
+    <nav className="bg-blue-500 px-3 sm:px-6 py-4 flex items-center justify-between flex-col md:flex-row">
+      <a href="/">
+        <h1 className="text-white text-2xl py-2">Consulta de hándicap</h1>
+      </a>
+      <PlayerChooser />
+    </nav>
+  );
+}
+
 export default function App() {
-  return <Outlet />;
+  return (
+    <>
+      <Header />
+      <Outlet />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

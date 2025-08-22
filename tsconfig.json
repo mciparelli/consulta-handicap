@@ -10,8 +10,9 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-    "types": [
-        "./worker-configuration.d.ts"
-    ]
+    "paths": {
+      "~/*": ["./app/*"]
+    },
+    "types": ["./worker-configuration.d.ts"]
   }
 }

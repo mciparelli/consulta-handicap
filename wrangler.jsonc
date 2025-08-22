@@ -4,7 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "hcp-workers",
+  "name": "hcp",
   "compatibility_date": "2025-04-04",
   "main": "./workers/app.ts",
   "vars": {
@@ -15,11 +15,14 @@
     "enabled": true,
   },
   "hyperdrive": [
-    {
-      "binding": "HYPERDRIVE",
-      "id": "f86f99bd4f0d47ccb94eafc2848f9bb8",
-    },
-  ],
+		{
+			"binding": "HYPERDRIVE",
+			"id": "f86f99bd4f0d47ccb94eafc2848f9bb8",
+
+			// Optional. Can be used to connect to a local database for local development with `wrangler dev`
+			"localConnectionString": "postgres://tincho:33264197@localhost:5432/hcp",
+		},
+	],
   /**
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
