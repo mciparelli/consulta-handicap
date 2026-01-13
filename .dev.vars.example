@@ -1,0 +1,3 @@
+# LibSQL/Turso database configuration
+LIBSQL_URL=libsql://your-database.turso.io
+LIBSQL_AUTH_TOKEN=your-auth-token

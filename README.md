@@ -1,128 +1,122 @@
-# Remix + Deno
+# Consulta de Handicap
 
-Welcome to the Deno template for Remix! 🦕
+A golf handicap lookup application built with Elysia and JSX server-side rendering, deployed to Cloudflare Workers.
 
-For more, check out the [Remix docs](https://remix.run/docs).
+## Tech Stack
 
-## Install
+- **[Elysia](https://elysiajs.com/)** - Fast Bun web framework
+- **[@kitajs/html](https://github.com/kitajs/html)** - JSX runtime for server-side rendering
+- **[Datastar](https://data-star.dev/)** - Lightweight hypermedia framework for client-side interactivity
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
+- **[Cloudflare Workers](https://workers.cloudflare.com/)** - Edge deployment
+- **[Turso/libSQL](https://turso.tech/)** - Edge SQLite database
 
-```sh
-npx create-remix@latest --template deno
-```
+## Features
 
-## Managing dependencies
-
-Read about
-[how we recommend to manage dependencies for Remix projects using Deno](https://github.com/remix-run/remix/blob/main/decisions/0001-use-npm-to-manage-npm-dependencies-for-deno-projects.md).
-
-- ✅ You should use `npm` to install NPM packages
-  ```sh
-  npm install react
-  ```
-  ```ts
-  import { useState } from "react";
-  ```
-- ✅ You may use inlined URL imports or
-  [deps.ts](https://deno.land/manual/examples/manage_dependencies#managing-dependencies)
-  for Deno modules.
-  ```ts
-  import { copy } from "https://deno.land/std@0.138.0/streams/conversion.ts";
-  ```
-- ❌ Do not use
-  [import maps](https://deno.land/manual/linking_to_external_code/import_maps).
+- Search for players by name or matricula (registration number)
+- View player's last 20 score cards (tarjetas)
+- See handicap history and trends
+- Highlights the 8 best differentials used for handicap calculation
+- Shows unprocessed cards that will be included next Thursday
 
 ## Development
 
-From your terminal:
+### Prerequisites
 
-```sh
-npm run dev
+- [Bun](https://bun.sh/) installed
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) for Cloudflare Workers
+
+### Setup
+
+1. Install dependencies:
+
+   ```bash
+   bun install
+   ```
+
+2. Build CSS:
+
+   ```bash
+   bun run build:css
+   ```
+
+3. Start development server:
+
+   ```bash
+   bun run dev
+   ```
+
+### Project Structure
+
 ```
-
-This starts your app in development mode, rebuilding assets on file changes.
-
-### Type hints
-
-This template provides type hinting to VS Code via a
-[dedicated import map](./.vscode/resolve_npm_imports.json).
-
-To get types in another editor, use an extension for Deno that supports import
-maps and point your editor to `./.vscode/resolve_npm_imports.json`.
-
-For more, see
-[our decision doc for interop between Deno and NPM](https://github.com/remix-run/remix/blob/main/decisions/0001-use-npm-to-manage-npm-dependencies-for-deno-projects.md#vs-code-type-hints).
-
-## Production
-
-First, build your app for production:
-
-```sh
-npm run build
-```
-
-Then run the app in production mode:
-
-```sh
-npm start
+src/
+├── index.tsx          # Main Elysia app with routes
+├── types.ts           # TypeScript type definitions
+├── utils.ts           # Utility functions
+├── api/
+│   ├── index.ts       # API exports
+│   ├── aag.ts         # AAG (Argentine Golf Association) API
+│   ├── vista.ts       # Vista Golf API for player search
+│   └── hyperdrive-db.ts  # Database operations
+├── db/
+│   └── pg-client.ts   # PostgreSQL client for Hyperdrive
+├── pages/
+│   ├── layout.tsx     # Main layout with header and player search
+│   ├── home.tsx       # Home page
+│   ├── tarjetas.tsx   # Score cards page
+│   └── setup-db.tsx   # Database setup page
+└── components/
+    └── player-results.tsx  # Player search results dropdown
 ```
 
 ## Deployment
 
-Building the Deno app (`npm run build`) results in two outputs:
+### Configure Wrangler
 
-- `build/` (server bundle)
-- `public/build/` (browser bundle)
+Set your secrets:
 
-You can deploy these bundles to any host that runs Deno, but here we'll focus on
-deploying to [Deno Deploy](https://deno.com/deploy).
+```bash
+# Set your Turso database URL
+wrangler secret put LIBSQL_URL
+# Enter: libsql://your-database.turso.io
 
-### Setting up Deno Deploy
-
-1. [Sign up](https://dash.deno.com/signin) for Deno Deploy.
-
-2. [Create a new Deno Deploy project](https://dash.deno.com/new) for this app.
-
-3. Replace `<your deno deploy project>` in the `deploy` script in `package.json`
-   with your Deno Deploy project name:
-
-```json filename=package.json
-{
-  "scripts": {
-    "deploy": "deployctl deploy --project=<your deno deploy project> --include=.cache,build,public ./build/index.js"
-  }
-}
+# Set your Turso auth token
+wrangler secret put LIBSQL_AUTH_TOKEN
+# Enter: your-auth-token
 ```
 
-4. [Create a personal access token](https://dash.deno.com/account) for the Deno
-   Deploy API and export it as `DENO_DEPLOY_TOKEN`:
+### Deploy
 
-```sh
-export DENO_DEPLOY_TOKEN=<your Deno Deploy API token>
+```bash
+bun run deploy
 ```
 
-You may want to add this to your `rc` file (e.g. `.bashrc` or `.zshrc`) to make
-it available for new terminal sessions, but make sure you don't commit this
-token into `git`. If you want to use this token in GitHub Actions, set it as a
-GitHub secret.
+## Database Setup
 
-5. Install the Deno Deploy CLI,
-   [`deployctl`](https://github.com/denoland/deployctl):
+1. Create a Turso database at [turso.tech](https://turso.tech)
+2. Get your database URL and auth token
+3. Configure the secrets in Cloudflare (see above)
+4. Navigate to `/setup-db` to initialize the schema
 
-```sh
-deno install --allow-read --allow-write --allow-env --allow-net --allow-run --no-check -r -f https://deno.land/x/deploy/deployctl.ts
+## Client-Side Interactivity
+
+This app uses [Datastar](https://data-star.dev/) for client-side interactivity instead of React. Datastar provides:
+
+- `data-store` - Reactive state management
+- `data-bind` - Two-way data binding
+- `data-on` - Event handlers with debouncing
+- `data-show` - Conditional rendering
+- `@get()` - Fetch and morph HTML from server
+
+Example from the player search:
+
+```html
+<input
+  data-bind:value="$searchString"
+  data-on:input.debounce_250ms="$searchString.length >= 3 && @get('/api/find-players?searchString=' + $searchString)"
+/>
 ```
 
-6. If you have previously installed the Deno Deploy CLI, you should update it to
-   the latest version:
+## License
 
-```sh
-deployctl upgrade
-```
-
-### Deploying to Deno Deploy
-
-After you've set up Deno Deploy, run:
-
-```sh
-npm run deploy
-```
+MIT

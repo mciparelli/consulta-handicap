@@ -1,10 +1,25 @@
 import { date as dateUtils } from "~/utils";
+import type { Tarjeta } from "~/types";
 
-async function getTarjetas(matricula) {
+interface RawTarjeta {
+  NombreClub: string;
+  SlopeRating: number;
+  ScoreAjustado: number;
+  CourseRating: number;
+  PCC: number;
+  Diferencial: number;
+  FechaTorneo: string;
+  FechaCarga: string;
+  Score: number;
+  TipoTarjeta: string;
+  Procesado: boolean;
+}
+
+export async function getTarjetas(matricula: number): Promise<Tarjeta[]> {
   const response = await fetch(
     `https://www.aag.org.ar/cake/Usuarios/getTarjetas/${matricula}`
   );
-  const result = await response.json();
+  const result: RawTarjeta[] = await response.json();
 
   return result.map((tarjeta) => {
     const [clubId, clubName] = tarjeta.NombreClub.split(" - ").map((v) =>
@@ -23,7 +38,7 @@ async function getTarjetas(matricula) {
       date,
       cargaDate,
       clubId,
-      clubName: clubName.toLowerCase().trim(),
+      clubName: clubName?.toLowerCase().trim() ?? "",
       diferencial,
       score: tarjeta.Score,
       PCC,
@@ -35,5 +50,3 @@ async function getTarjetas(matricula) {
     };
   });
 }
-
-export { getTarjetas };

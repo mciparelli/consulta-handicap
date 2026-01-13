@@ -1,41 +1,29 @@
 {
   "private": true,
-  "sideEffects": false,
   "name": "consulta-handicap",
   "description": "consulta de handicap",
+  "type": "module",
   "scripts": {
-    "build": "remix build",
-    "deploy": "deployctl deploy --prod --include=build,public --project=consulta-handicap ./build/index.js",
-    "dev": "npm-run-all build --parallel \"dev:*\"",
-    "dev:deno": "cross-env NODE_ENV=development deno run --env --unstable --watch --allow-net --allow-read --allow-env ./build/index.js",
-    "dev:remix": "remix watch",
-    "format": "deno fmt --ignore=node_modules,build,public/build",
-    "lint": "deno lint --ignore=node_modules,build,public/build",
-    "start": "cross-env NODE_ENV=production deno run --unstable --allow-net --allow-read --allow-env ./build/index.js",
-    "typecheck": "deno check"
+    "dev": "wrangler dev",
+    "build": "bun build src/index.tsx --outdir=dist --target=browser --minify",
+    "build:css": "tailwindcss -i ./src/styles.css -o ./public/styles.css --minify",
+    "deploy": "bun run build:css && wrangler deploy",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.0",
-    "@heroicons/react": "^2.0.11",
-    "@libsql/client": "^0.1.4",
-    "@nivo/core": "^0.80.0",
-    "@nivo/line": "^0.80.0",
-    "@remix-run/deno": "^1.15.0",
-    "@remix-run/react": "^1.15.0",
-    "cheerio": "^1.0.0-rc.12",
-    "isbot": "^3.6.8",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-responsive": "^9.0.2",
-    "use-debounce": "^9.0.4"
+    "@elysiajs/html": "^1.1.1",
+    "@kitajs/html": "^4.2.5",
+    "@libsql/client": "^0.14.0",
+    "cheerio": "^1.0.0",
+    "elysia": "^1.1.26"
   },
   "devDependencies": {
-    "@remix-run/dev": "^1.15.0",
-    "cross-env": "^7.0.3",
-    "npm-run-all": "^4.1.5",
-    "tailwindcss": "^3.3.2"
-  },
-  "engines": {
-    "node": ">=18"
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "bun-types": "^1.1.34",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
+    "wrangler": "^4.59.1"
   }
 }
