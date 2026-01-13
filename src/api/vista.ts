@@ -7,23 +7,19 @@ export async function findPlayers(searchString: string): Promise<Player[]> {
   const paramKey = isOnlyNumbers ? "TxtNroMatricula" : "TxtApellido";
   params.append(paramKey, searchString);
 
-  const response = await fetch(
-    "http://www.vistagolf.com.ar/handicap/FiltroArg.asp",
-    { method: "POST", body: params }
-  );
+  const response = await fetch("http://www.vistagolf.com.ar/handicap/FiltroArg.asp", {
+    method: "POST",
+    body: params,
+  });
 
   const buffer = await response.arrayBuffer();
   const result = new TextDecoder("ISO-8859-1").decode(buffer);
   const $ = cheerio.load(result);
 
-  const [domUnparsed, monthString, yearUnparsed] = $("#table31 tr:eq(0)")
-    .text()
-    .split("/");
+  const [domUnparsed, monthString, yearUnparsed] = $("#table31 tr:eq(0)").text().split("/");
   const domString = domUnparsed.slice(-2);
   const yearString = yearUnparsed.slice(0, 4);
-  const [untilDom, untilMonth, untilYear] = [domString, monthString, yearString].map(
-    Number
-  );
+  const [untilDom, untilMonth, untilYear] = [domString, monthString, yearString].map(Number);
   const handicapDate = new Date(untilYear, untilMonth - 1, untilDom - 7);
 
   const players: Player[] = [];
@@ -42,6 +38,11 @@ export async function findPlayers(searchString: string): Promise<Player[]> {
         handicapIndex = 54;
       } else if (handicapIndexString.startsWith("+")) {
         handicapIndex = handicapIndex * -1;
+      }
+
+      // Skip players with invalid handicap index
+      if (isNaN(handicapIndex)) {
+        return;
       }
 
       players.push({
