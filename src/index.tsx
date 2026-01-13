@@ -95,7 +95,7 @@ const app = new Elysia({
   .get(
     "/api/find-players",
     async ({ query, set, cfEnv }) => {
-      // set.headers["Cache-Control"] = `max-age=${date.secondsToNextThursday()}`;
+      set.headers["Cache-Control"] = `max-age=${date.secondsToNextThursday()}`;
       set.headers["Content-Type"] = "text/html";
 
       const searchString = query.searchString;
