@@ -5,20 +5,21 @@
   "compatibility_date": "2025-06-01",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
-    "directory": "./public"
+    "directory": "./public",
   },
   // Development environment
   "dev": {
-    "port": 8787
+    "port": 8787,
   },
   "vars": {
-    "DEV": "true"
+    "DEV": "true",
   },
   "env": {
     "production": {
+      "name": "consulta-handicap",
       "vars": {
-        "DEV": "false"
-      }
-    }
-  }
+        "DEV": "false",
+      },
+    },
+  },
 }
