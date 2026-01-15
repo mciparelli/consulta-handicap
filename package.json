@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "build:css": "tailwindcss -i ./src/styles.css -o ./public/styles.css --minify",
-    "deploy": "wrangler deploy",
+    "deploy": "wrangler deploy --env production",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit"
   },
