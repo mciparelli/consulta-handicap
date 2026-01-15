@@ -8,7 +8,7 @@ import { TarjetasPage, TarjetasNotFound, TarjetasError } from "~/pages/tarjetas"
 import { SetupDbPage } from "~/pages/setup-db";
 import { PlayerResults } from "~/components/player-results";
 import { findPlayers, getTarjetas, getPlayer, createSchema } from "~/api";
-import { date } from "~/utils";
+import { cache } from "~/cache";
 import type { Env } from "~/types";
 
 const app = new Elysia({
@@ -22,7 +22,7 @@ const app = new Elysia({
   })
   // Home page
   .get("/", ({ set, isDev }) => {
-    set.headers["Cache-Control"] = `max-age=0, s-maxage=${date.secondsToNextThursday()}`;
+    cache.apply(set.headers, cache.untilNextThursday());
     return (
       <Layout dev={isDev}>
         <HomePage />
@@ -33,9 +33,7 @@ const app = new Elysia({
   .get(
     "/tarjetas/:matricula",
     async ({ params: { matricula }, query, set, cfEnv, isDev }) => {
-      set.headers[
-        "Cache-Control"
-      ] = `max-age=0, s-maxage=0, stale-while-revalidate=${date.secondsToNextThursday()}`;
+      cache.apply(set.headers, cache.staleWhileRevalidate());
 
       const matriculaNum = Number(matricula);
       if (isNaN(matriculaNum)) {
@@ -95,7 +93,7 @@ const app = new Elysia({
   .get(
     "/api/find-players",
     async ({ query, set, cfEnv }) => {
-      set.headers["Cache-Control"] = `max-age=${date.secondsToNextThursday()}`;
+      cache.apply(set.headers, cache.apiResponse());
       set.headers["Content-Type"] = "text/html";
 
       const searchString = query.searchString;
@@ -135,7 +133,7 @@ const app = new Elysia({
   .get(
     "/api/find-players-json",
     async ({ query, set, cfEnv }) => {
-      set.headers["Cache-Control"] = `max-age=${date.secondsToNextThursday()}`;
+      cache.apply(set.headers, cache.apiResponse());
 
       const searchString = query.searchString;
       if (!searchString || searchString.length < 3) {
