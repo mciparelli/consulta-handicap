@@ -46,6 +46,8 @@ export function PlayerResults({ players }: PlayerResultsProps): JSX.Element {
           {...{
             "data-class": `{'bg-blue-700 text-white': $selectedIndex === ${index}}`,
             "data-on:mouseenter": `$selectedIndex = ${index}`,
+            "data-on:click":
+              "if (!evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && evt.button === 0) $navigating = true",
           }}
         >
           {player.fullName} ({player.handicapIndex})

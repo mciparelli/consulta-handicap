@@ -25,6 +25,7 @@ export function Layout({ children, dev = false }: LayoutProps): JSX.Element {
         <div
           id="tarjetas-loader"
           style="display: none"
+          data-show="$navigating"
           class="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/80"
           role="status"
           aria-live="polite"
@@ -54,7 +55,6 @@ export function Layout({ children, dev = false }: LayoutProps): JSX.Element {
             <p class="text-lg text-gray-700">Cargando tarjetas del jugador...</p>
           </div>
         </div>
-        <script>{`window.__showTarjetasLoader=function(){var el=document.getElementById('tarjetas-loader');if(el)el.style.display='flex';};document.addEventListener('click',function(e){var t=e.target&&e.target.closest?e.target.closest('a[href^="/tarjetas/"]'):null;if(t)window.__showTarjetasLoader();});window.addEventListener('pageshow',function(){var el=document.getElementById('tarjetas-loader');if(el)el.style.display='none';});`}</script>
         {dev && <DebugPanel />}
       </body>
     </html>
@@ -76,7 +76,7 @@ function PlayerChooser(): JSX.Element {
   return (
     <div
       class="relative w-full md:w-auto"
-      data-signals="{ searchString: '', showResults: false, selectedIndex: -1 }"
+      data-signals="{ searchString: '', showResults: false, selectedIndex: -1, navigating: false }"
     >
       <div class="flex justify-between">
         <input
@@ -93,7 +93,7 @@ function PlayerChooser(): JSX.Element {
             "data-on:focus": "$showResults = true",
             "data-on:blur__debounce.200ms": "$showResults = false",
             "data-on:keydown":
-              "if (evt.key === 'ArrowDown') { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items.length > 0) $selectedIndex = Math.min($selectedIndex + 1, items.length - 1); } else if (evt.key === 'ArrowUp') { evt.preventDefault(); $selectedIndex = Math.max($selectedIndex - 1, -1); } else if (evt.key === 'Enter' && $selectedIndex >= 0) { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items[$selectedIndex]) { window.__showTarjetasLoader && window.__showTarjetasLoader(); window.location.href = items[$selectedIndex].href; } } else if (evt.key === 'Escape') { $showResults = false; }",
+              "if (evt.key === 'ArrowDown') { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items.length > 0) $selectedIndex = Math.min($selectedIndex + 1, items.length - 1); } else if (evt.key === 'ArrowUp') { evt.preventDefault(); $selectedIndex = Math.max($selectedIndex - 1, -1); } else if (evt.key === 'Enter' && $selectedIndex >= 0) { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items[$selectedIndex]) { $navigating = true; window.location.href = items[$selectedIndex].href; } } else if (evt.key === 'Escape') { $showResults = false; }",
           }}
         />
         <svg

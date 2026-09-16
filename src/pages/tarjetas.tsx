@@ -65,7 +65,9 @@ export function TarjetasPage({
             name="todas"
             checked={viendoHistoricas}
             class="w-4 mr-2"
-            onchange={`window.__showTarjetasLoader && window.__showTarjetasLoader(); window.location.href = '/tarjetas/${matricula}' + (this.checked ? '?todas=1#historica-0' : '')`}
+            {...{
+              "data-on:change": `$navigating = true; window.location.href = '/tarjetas/${matricula}' + (el.checked ? '?todas=1#historica-0' : '')`,
+            }}
           />
           Ver históricas
         </label>
