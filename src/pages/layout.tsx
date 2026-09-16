@@ -22,6 +22,39 @@ export function Layout({ children, dev = false }: LayoutProps): JSX.Element {
       <body class="bg-gray-100 h-[100vh] flex flex-col">
         <Header />
         {children}
+        <div
+          id="tarjetas-loader"
+          style="display: none"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/80"
+          role="status"
+          aria-live="polite"
+        >
+          <div class="flex flex-col items-center gap-3 bg-white px-8 py-6 rounded-lg shadow-lg">
+            <svg
+              class="w-8 h-8 animate-spin text-blue-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <p class="text-lg text-gray-700">Cargando tarjetas del jugador...</p>
+          </div>
+        </div>
+        <script>{`window.__showTarjetasLoader=function(){var el=document.getElementById('tarjetas-loader');if(el)el.style.display='flex';};document.addEventListener('click',function(e){var t=e.target&&e.target.closest?e.target.closest('a[href^="/tarjetas/"]'):null;if(t)window.__showTarjetasLoader();});window.addEventListener('pageshow',function(){var el=document.getElementById('tarjetas-loader');if(el)el.style.display='none';});`}</script>
         {dev && <DebugPanel />}
       </body>
     </html>
@@ -60,7 +93,7 @@ function PlayerChooser(): JSX.Element {
             "data-on:focus": "$showResults = true",
             "data-on:blur__debounce.200ms": "$showResults = false",
             "data-on:keydown":
-              "if (evt.key === 'ArrowDown') { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items.length > 0) $selectedIndex = Math.min($selectedIndex + 1, items.length - 1); } else if (evt.key === 'ArrowUp') { evt.preventDefault(); $selectedIndex = Math.max($selectedIndex - 1, -1); } else if (evt.key === 'Enter' && $selectedIndex >= 0) { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items[$selectedIndex]) window.location.href = items[$selectedIndex].href; } else if (evt.key === 'Escape') { $showResults = false; }",
+              "if (evt.key === 'ArrowDown') { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items.length > 0) $selectedIndex = Math.min($selectedIndex + 1, items.length - 1); } else if (evt.key === 'ArrowUp') { evt.preventDefault(); $selectedIndex = Math.max($selectedIndex - 1, -1); } else if (evt.key === 'Enter' && $selectedIndex >= 0) { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items[$selectedIndex]) { window.__showTarjetasLoader && window.__showTarjetasLoader(); window.location.href = items[$selectedIndex].href; } } else if (evt.key === 'Escape') { $showResults = false; }",
           }}
         />
         <svg
