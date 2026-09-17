@@ -60,16 +60,29 @@ export function TarjetasPage({
         <div class={`ml-6 mr-2 rounded-sm w-8 h-4 ${bg.next}`}></div>
         <span>Ingresan el próximo jueves</span>
         <label class="flex ml-auto text-sm">
-          <input
-            type="checkbox"
-            name="todas"
-            checked={viendoHistoricas}
-            class="w-4 mr-2"
-            {...{
-              "data-on:change": `$navigating = true; window.location.href = '/tarjetas/${matricula}' + (el.checked ? '?todas=1#historica-0' : '')`,
-            }}
-          />
-          Ver históricas
+          {viendoHistoricas ? (
+            <a
+              href={`/tarjetas/${matricula}`}
+              class="underline text-blue-700 hover:text-blue-900"
+              {...{
+                "data-on:click":
+                  "if (!evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && evt.button === 0) $navigating = true",
+              }}
+            >
+              Ver últimas 20
+            </a>
+          ) : (
+            <a
+              href={`/tarjetas/${matricula}?todas=1#historica-0`}
+              class="underline text-blue-700 hover:text-blue-900"
+              {...{
+                "data-on:click":
+                  "if (!evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && evt.button === 0) $navigating = true",
+              }}
+            >
+              Ver históricas
+            </a>
+          )}
         </label>
       </div>
 

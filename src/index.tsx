@@ -38,7 +38,7 @@ const app = new Elysia({
       const matriculaNum = Number(matricula);
       if (isNaN(matriculaNum)) {
         return (
-          <Layout dev={isDev}>
+          <Layout dev={isDev} transitionType="tarjetas">
             <TarjetasNotFound matricula={matricula} />
           </Layout>
         );
@@ -59,7 +59,7 @@ const app = new Elysia({
         }
 
         return (
-          <Layout dev={isDev}>
+          <Layout dev={isDev} transitionType="tarjetas">
             <TarjetasPage
               tarjetas={tarjetas}
               fullName={player?.fullName ?? ""}
@@ -74,7 +74,7 @@ const app = new Elysia({
       } catch (error) {
         console.error("Error loading tarjetas:", error);
         return (
-          <Layout dev={isDev}>
+          <Layout dev={isDev} transitionType="tarjetas">
             <TarjetasError />
           </Layout>
         );

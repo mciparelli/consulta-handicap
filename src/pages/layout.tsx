@@ -2,9 +2,10 @@ import type { PropsWithChildren } from "@kitajs/html";
 
 interface LayoutProps extends PropsWithChildren {
   dev?: boolean;
+  transitionType?: string;
 }
 
-export function Layout({ children, dev = false }: LayoutProps): JSX.Element {
+export function Layout({ children, dev = false, transitionType }: LayoutProps): JSX.Element {
   return (
     <html lang="en">
       <head>
@@ -13,7 +14,32 @@ export function Layout({ children, dev = false }: LayoutProps): JSX.Element {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta name="description" content="Consulta de handicap" />
         <link rel="stylesheet" href="/styles.css" />
-        <style>{`@view-transition { navigation: auto; }`}</style>
+        <style>{`@view-transition { navigation: auto;${transitionType ? ` types: ${transitionType};` : ""} }
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-fade-scale-out 0.35s ease-out both;
+  }
+  ::view-transition-new(root) {
+    animation: vt-rise-in 0.35s ease-out both;
+  }
+}
+@keyframes vt-fade-scale-out {
+  to {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+@keyframes vt-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+@supports selector(html:active-view-transition-type(tarjetas)) {
+  html:active-view-transition-type(tarjetas) #tarjetas-loader {
+    display: flex !important;
+  }
+}`}</style>
         <script
           type="module"
           src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-RC.7/bundles/datastar.js"
