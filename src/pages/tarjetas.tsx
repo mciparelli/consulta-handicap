@@ -38,6 +38,11 @@ export function TarjetasPage({
     next: "bg-orange-300",
   };
 
+  const navClick =
+    "if (!evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && evt.button === 0) $navigating = true";
+  const toggleClass =
+    "inline-flex items-center gap-2 px-4 py-2 rounded-md border border-blue-600 text-blue-700 hover:bg-blue-50 transition-colors";
+
   return (
     <div class="p-5">
       <div class="flex text-xl py-3">
@@ -112,23 +117,47 @@ export function TarjetasPage({
         {viendoHistoricas ? (
           <a
             href={`/tarjetas/${matricula}`}
-            class="underline text-blue-700 hover:text-blue-900"
-            {...{
-              "data-on:click":
-                "if (!evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && evt.button === 0) $navigating = true",
-            }}
+            class={toggleClass}
+            {...{ "data-on:click": navClick }}
           >
-            Ver últimas 20
+            <svg
+              class="w-4 h-4"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m4.5 15.75 7.5-7.5 7.5 7.5"
+              />
+            </svg>
+            Ocultar históricas
           </a>
         ) : (
           <a
             href={`/tarjetas/${matricula}?todas=1#historica-0`}
-            class="underline text-blue-700 hover:text-blue-900"
-            {...{
-              "data-on:click":
-                "if (!evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && evt.button === 0) $navigating = true",
-            }}
+            class={toggleClass}
+            {...{ "data-on:click": navClick }}
           >
+            <svg
+              class="w-4 h-4"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m19.5 8.25-7.5 7.5-7.5-7.5"
+              />
+            </svg>
             Ver históricas
           </a>
         )}
