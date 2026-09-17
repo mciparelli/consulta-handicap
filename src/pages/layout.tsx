@@ -38,6 +38,21 @@ export function Layout({ children, dev = false, transitionType }: LayoutProps): 
 @supports selector(html:active-view-transition-type(tarjetas)) {
   html:active-view-transition-type(tarjetas) #tarjetas-loader {
     display: flex !important;
+    animation: none;
+  }
+}
+/* Grace period: only show the loader if the wait exceeds 300ms.
+   Toggling display restarts the animation, so fast (cached) navigations
+   unload before it ever becomes visible. */
+#tarjetas-loader {
+  animation: vt-loader-in 0s 300ms both;
+}
+@keyframes vt-loader-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }`}</style>
         <script
