@@ -59,31 +59,6 @@ export function TarjetasPage({
         <span>Ocho mejores</span>
         <div class={`ml-6 mr-2 rounded-sm w-8 h-4 ${bg.next}`}></div>
         <span>Ingresan el próximo jueves</span>
-        <label class="flex ml-auto text-sm">
-          {viendoHistoricas ? (
-            <a
-              href={`/tarjetas/${matricula}`}
-              class="underline text-blue-700 hover:text-blue-900"
-              {...{
-                "data-on:click":
-                  "if (!evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && evt.button === 0) $navigating = true",
-              }}
-            >
-              Ver últimas 20
-            </a>
-          ) : (
-            <a
-              href={`/tarjetas/${matricula}?todas=1#historica-0`}
-              class="underline text-blue-700 hover:text-blue-900"
-              {...{
-                "data-on:click":
-                  "if (!evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && evt.button === 0) $navigating = true",
-              }}
-            >
-              Ver históricas
-            </a>
-          )}
-        </label>
       </div>
 
       <div class="w-full overflow-x-auto">
@@ -131,6 +106,32 @@ export function TarjetasPage({
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div class="flex justify-center py-4 text-sm">
+        {viendoHistoricas ? (
+          <a
+            href={`/tarjetas/${matricula}`}
+            class="underline text-blue-700 hover:text-blue-900"
+            {...{
+              "data-on:click":
+                "if (!evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && evt.button === 0) $navigating = true",
+            }}
+          >
+            Ver últimas 20
+          </a>
+        ) : (
+          <a
+            href={`/tarjetas/${matricula}?todas=1#historica-0`}
+            class="underline text-blue-700 hover:text-blue-900"
+            {...{
+              "data-on:click":
+                "if (!evt.metaKey && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && evt.button === 0) $navigating = true",
+            }}
+          >
+            Ver históricas
+          </a>
+        )}
       </div>
     </div>
   );

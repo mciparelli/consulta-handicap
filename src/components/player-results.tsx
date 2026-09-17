@@ -35,7 +35,7 @@ export function PlayerResults({ players }: PlayerResultsProps): JSX.Element {
     >
       <span
         id={initKey}
-        data-init="$selectedIndex = 0; $showResults = true"
+        data-init={`$selectedIndex = 0; $showResults = true; $resultCount = ${validPlayers.length}`}
         style="display: none"
       ></span>
       {validPlayers.map((player, index) => (

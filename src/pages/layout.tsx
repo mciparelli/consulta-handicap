@@ -102,7 +102,7 @@ function PlayerChooser(): JSX.Element {
   return (
     <div
       class="relative w-full md:w-auto"
-      data-signals="{ searchString: '', showResults: false, selectedIndex: -1, navigating: false }"
+      data-signals="{ searchString: '', showResults: false, selectedIndex: -1, navigating: false, resultCount: 0 }"
     >
       <div class="flex justify-between">
         <input
@@ -119,7 +119,7 @@ function PlayerChooser(): JSX.Element {
             "data-on:focus": "$showResults = true",
             "data-on:blur__debounce.200ms": "$showResults = false",
             "data-on:keydown":
-              "if (evt.key === 'ArrowDown') { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items.length > 0) $selectedIndex = Math.min($selectedIndex + 1, items.length - 1); } else if (evt.key === 'ArrowUp') { evt.preventDefault(); $selectedIndex = Math.max($selectedIndex - 1, -1); } else if (evt.key === 'Enter' && $selectedIndex >= 0) { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items[$selectedIndex]) { $navigating = true; window.location.href = items[$selectedIndex].href; } } else if (evt.key === 'Escape') { $showResults = false; }",
+              "if (evt.key === 'ArrowDown') { evt.preventDefault(); $selectedIndex = Math.min($selectedIndex + 1, $resultCount - 1); } else if (evt.key === 'ArrowUp') { evt.preventDefault(); $selectedIndex = Math.max($selectedIndex - 1, -1); } else if (evt.key === 'Enter' && $selectedIndex >= 0) { evt.preventDefault(); const items = document.querySelectorAll('#player-results a'); if (items[$selectedIndex]) items[$selectedIndex].click(); } else if (evt.key === 'Escape') { $showResults = false; }",
           }}
         />
         <svg
