@@ -114,7 +114,7 @@ function PlayerChooser(): JSX.Element {
           {...{
             "data-bind": "searchString",
             "data-indicator:fetching": "",
-            "data-on:input__debounce.250ms__viewtransition":
+            "data-on:input__debounce.250ms":
               "$selectedIndex = -1; $searchString.length >= 3 && @get('/api/find-players?searchString=' + encodeURIComponent($searchString))",
             "data-on:focus": "$showResults = true",
             "data-on:blur__debounce.200ms": "$showResults = false",
@@ -160,7 +160,7 @@ function PlayerChooser(): JSX.Element {
 function DebugPanel(): JSX.Element {
   return (
     <div
-      class="fixed bottom-4 right-4 max-w-sm max-h-64 overflow-auto bg-gray-900 text-green-400 text-xs font-mono p-3 rounded-lg shadow-lg opacity-90 z-50"
+      class="fixed bottom-4 right-4 max-w-sm h-64 overflow-auto bg-gray-900 text-green-400 text-xs font-mono p-3 rounded-lg shadow-lg opacity-90 z-50"
       data-signals="{ _debugOpen: true }"
     >
       <div class="flex justify-between items-center mb-2">

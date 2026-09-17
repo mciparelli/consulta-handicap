@@ -33,7 +33,7 @@ const app = new Elysia({
   .get(
     "/tarjetas/:matricula",
     async ({ params: { matricula }, query, set, cfEnv, isDev }) => {
-      cache.apply(set.headers, cache.staleWhileRevalidate());
+      cache.apply(set.headers, cache.tarjetasPage());
 
       const matriculaNum = Number(matricula);
       if (isNaN(matriculaNum)) {
@@ -73,6 +73,7 @@ const app = new Elysia({
         );
       } catch (error) {
         console.error("Error loading tarjetas:", error);
+        cache.apply(set.headers, cache.none());
         return (
           <Layout dev={isDev} transitionType="tarjetas">
             <TarjetasError />

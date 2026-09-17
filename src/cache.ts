@@ -45,6 +45,19 @@ export function cacheStaleWhileRevalidate(): CacheHeaders {
 }
 
 /**
+ * Creates cache headers for the tarjetas page (updates weekly on Thursdays)
+ * - Browser: cache until next Thursday (toggling back is instant, no refetch)
+ * - CDN: no cache, but serve stale while revalidating in background
+ */
+export function cacheTarjetasPage(): CacheHeaders {
+  const ttl = date.secondsToNextThursday();
+  return {
+    "Cache-Control": `public, max-age=${ttl}`,
+    "CDN-Cache-Control": `public, max-age=0, stale-while-revalidate=${ttl}`,
+  };
+}
+
+/**
  * Creates cache headers for API responses
  * - Browser: cache until next Thursday
  * - CDN: cache until next Thursday
@@ -112,6 +125,7 @@ export function applyCache(
 export const cache = {
   untilNextThursday: cacheUntilNextThursday,
   staleWhileRevalidate: cacheStaleWhileRevalidate,
+  tarjetasPage: cacheTarjetasPage,
   apiResponse: cacheApiResponse,
   none: noCache,
   custom: customCache,
